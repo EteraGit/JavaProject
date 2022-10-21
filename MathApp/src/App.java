@@ -11,7 +11,7 @@ public class App {
 
         JLabel l2 = new JLabel("x");
         l2.setFont(new Font("Serif", Font.PLAIN, 30));
-        l2.setBounds(450, 400, l2.getPreferredSize().width, l2.getPreferredSize().height);
+        l2.setBounds(450, 250, l2.getPreferredSize().width, l2.getPreferredSize().height);
         
         
         Panel panel = new Panel();
