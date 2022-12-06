@@ -1,35 +1,45 @@
 package mainpackage;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+import java.awt.*;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.Vector;
 
 import javax.swing.JPanel;
 
-public class Panel extends JPanel{
+@SuppressWarnings("serial")
+public class Panel extends JPanel implements MouseWheelListener{
 	
-	private Color color;
-	private int x;
-	private int y;
-	public final int Preciznost = 100;
-	Vector<Tocka> arr;
+	public int WIDTH;
+	public int HEIGHT;
+	public double x_left;
+	public double x_right;
+	public double y_down;
+	public double y_up;
+	public int Preciznost;
+	public int x;
+	public int y;
+	public double zoom;
+	public Vector<Tocka> funkcija;
 
-	public Panel() 
+	public Panel(int width, int height) 
 	{
 		x = 10;
 		y = 10;
-		arr = new Vector<Tocka>();
+		WIDTH = width;
+		HEIGHT = height;
+		x_left = -8.88;
+		x_right = 8.88;
+		y_down = -5;
+		y_up = 5;
+		zoom = 0.1;
+		Preciznost = 1000;
 		
-		color = new Color(100, 100, 100);
-		for(int i = 0; i < 2 * 628; i++)
-		{
-			double broj_x = ((double) i ) / 100 - 6.28;
-			double broj_y = Math.log(broj_x) * broj_x;
-			
-			arr.add(new Tocka(broj_x, broj_y));
-		}
+		funkcija = new Vector<Tocka>();
+		
+		postaviFunkciju();
+		
+		addMouseWheelListener(this);
 	}
 	
 	public void paintComponent(Graphics g) 
@@ -37,19 +47,52 @@ public class Panel extends JPanel{
 		super.paintComponent(g);
 		
 		g.setColor(new Color(100,100,100));
-		g.drawLine(250, 0, 250, 500);
-		g.drawLine(0, 250, 500, 250);
-		g.drawString("y", 240, 15);
-		g.drawString("x", 475, 240);
+		
+		//crtaj y-os
+		if(x_right > 0 && x_left < 0)
+		{
+			JFrameTocka Ty_up = coordinate_system_to_jframe(0, y_up);
+			JFrameTocka Ty_down = coordinate_system_to_jframe(0, y_down);
+			g.drawLine(Ty_up.x, Ty_up.y, Ty_down.x, Ty_down.y);
+			g.drawString("y", Ty_up.x + 10, Ty_up.y + 10);
+			
+			//brojevi na y-osi
+			for(int i = (int) Math.floor(y_down) + 1; i <= (int) Math.abs(y_up); i++)
+			{
+				JFrameTocka Ty = coordinate_system_to_jframe(0, i);
+				if(i != 0) 
+					g.drawString(Integer.toString(i),
+							(int) Ty.x - 10, 
+							(int) Ty.y);
+			}
+		}
+		
+		//crtaj x-os
+		if(y_up > 0 && y_down < 0)
+		{
+			JFrameTocka Tx_right = coordinate_system_to_jframe(x_right, 0);
+			JFrameTocka Tx_left = coordinate_system_to_jframe(x_left, 0);
+			g.drawLine(Tx_right.x, Tx_right.y, Tx_left.x, Tx_left.y);
+			g.drawString("x", Tx_right.x - 25, Tx_right.y + 10);
+			
+			//brojevi na x-osi
+			for(int i = (int) Math.floor(x_left) + 1; i <= (int) Math.abs(x_right); i++)
+			{
+				JFrameTocka Tx = coordinate_system_to_jframe(i, 0);
+				g.drawString(Integer.toString(i),
+							(int) Tx.x,
+							(int) Tx.y + 12);
+			}
+		}
 		
 		//crtaj funkciju
-		for(int i = 0; i < arr.size()-1; i++)
+		for(int i = 0; i < funkcija.size() - 10; i++)
 		{
-			g.drawLine((int) (arr.get(i).x * 39.8 + 250), 
-						(int) (arr.get(i).y * (-39.8) + 250), 
-						(int) (arr.get(i+1).x * 39.8 + 250), 
-						(int) (arr.get(i+1).y * (-39.8) + 250));
-			System.out.println(arr.get(i).x);
+			JFrameTocka T1 = coordinate_system_to_jframe(funkcija.get(i).x, funkcija.get(i).y);
+			JFrameTocka T2 = coordinate_system_to_jframe(funkcija.get(i + 1).x, funkcija.get(i + 1).y);
+			if(funkcija.get(i + 1).y > y_down && funkcija.get(i + 1).y < y_up &&
+					funkcija.get(i + 1).x > x_left && funkcija.get(i + 1).x < x_right)
+				g.drawLine(T1.x, T1.y, T2.x, T2.y);
 		}
 		
 		//pocetni pravokutnici
@@ -58,21 +101,58 @@ public class Panel extends JPanel{
 			g.setColor(new Color(i * 10,i * 15, i * 5));
 			g.fillRect(x + i * 10, y + i * 10, 200, 50);	
 		}
+				
+		x += 1;
+		y += 1;
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		System.out.println(e.getWheelRotation());
+		System.out.println(e.getX() + "  " + e.getY());
+		System.out.println(jframe_to_coordinate_system(e.getX(), e.getY()).x + "  " + jframe_to_coordinate_system(e.getX(), e.getY()).y);
 		
-		//crtaj brojeve na osima
-		for(int i = 0; i < 13; i++)
+		if(e.getWheelRotation() < 0) //zoom in
 		{
-			g.drawString(Integer.toString(i - 6), (int) ((i-6) * 39.8 + 250), 260);
-			if(i-6 != 0) g.drawString(Integer.toString(i - 6), 255, (int) ((i-6) * (-39.8) + 250));
+			x_right = x_right - Math.abs(x_right - jframe_to_coordinate_system(e.getX(), e.getY()).x) * zoom;
+			x_left = x_left + Math.abs(x_left - jframe_to_coordinate_system(e.getX(), e.getY()).x) * zoom;
+			y_up = y_up - Math.abs(y_up - jframe_to_coordinate_system(e.getX(), e.getY()).y) * zoom;
+			y_down = y_down + Math.abs(y_down - jframe_to_coordinate_system(e.getX(), e.getY()).y) * zoom;
 		}
-		
-		x+=1;
-		y+=1;
+		else //zoom out
+		{
+			x_right = x_right + Math.abs(x_left - jframe_to_coordinate_system(e.getX(), e.getY()).x) * zoom;
+			x_left = x_left - Math.abs(x_right - jframe_to_coordinate_system(e.getX(), e.getY()).x) * zoom;
+			y_up = y_up + Math.abs(y_down - jframe_to_coordinate_system(e.getX(), e.getY()).y) * zoom;
+			y_down = y_down - Math.abs(y_up - jframe_to_coordinate_system(e.getX(), e.getY()).y) * zoom;
+		}
+		postaviFunkciju();
+		repaint();
 	}
 	
-	public void drawFunction(Graphics g)
+	public void postaviFunkciju()
 	{
-		
+		funkcija.clear();
+		for(int i = 0; i < Preciznost; i++)
+		{
+			double broj_x = x_left + ((double) i / (double) Preciznost) * Math.abs(x_right - x_left);
+			double broj_y = broj_x * broj_x;
+			
+			funkcija.add(new Tocka(broj_x, broj_y));
+		}
 	}
 	
+	public JFrameTocka coordinate_system_to_jframe(double x, double y)
+	{
+		double new_x = WIDTH * (Math.abs(x - x_left) / Math.abs(x_right - x_left));
+		double new_y = HEIGHT * (Math.abs(y - y_up) / Math.abs(y_up - y_down));
+		return new JFrameTocka((int) new_x, (int) new_y);
+	}
+	
+	public Tocka jframe_to_coordinate_system(int x, int y)
+	{
+		double new_x = x_left + Math.abs(x_right - x_left) * ((double) x / (double) WIDTH);
+		double new_y = y_up - Math.abs(y_up - y_down) * ((double) y / (double) HEIGHT);
+		return new Tocka(new_x, new_y);
+	}
 }

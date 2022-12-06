@@ -10,6 +10,8 @@ public class MainFrame implements Runnable{
 
 	private JFrame frame;
 	private JPanel mainPanel;
+	private final int WIDTH = 1280;
+	private final int HEIGHT = 720;
 	private final int FPS_SET = 120;
 	private Thread thread;
 
@@ -41,9 +43,9 @@ public class MainFrame implements Runnable{
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		mainPanel = new Panel();
+		mainPanel = new Panel(WIDTH, HEIGHT);
 		mainPanel.requestFocus();
-		frame.setSize(500, 500);
+		frame.setSize(WIDTH, HEIGHT);
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().add(mainPanel);
