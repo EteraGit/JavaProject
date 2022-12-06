@@ -42,11 +42,15 @@ public class Panel extends JPanel implements MouseWheelListener{
 		addMouseWheelListener(this);
 	}
 	
-	public void paintComponent(Graphics g) 
+	public void paintComponent(Graphics g1) 
 	{
-		super.paintComponent(g);
+		super.paintComponent(g1);
 		
-		g.setColor(new Color(100,100,100));
+		Graphics2D g = (Graphics2D) g1;
+		
+		g.setColor(new Color(0,0,0));
+		g.setStroke(new BasicStroke(2));
+		g.setFont(new Font("default", Font.BOLD, 15));
 		
 		//crtaj y-os
 		if(x_right > 0 && x_left < 0)
@@ -54,7 +58,7 @@ public class Panel extends JPanel implements MouseWheelListener{
 			JFrameTocka Ty_up = coordinate_system_to_jframe(0, y_up);
 			JFrameTocka Ty_down = coordinate_system_to_jframe(0, y_down);
 			g.drawLine(Ty_up.x, Ty_up.y, Ty_down.x, Ty_down.y);
-			g.drawString("y", Ty_up.x + 10, Ty_up.y + 10);
+			g.drawString("y", Ty_up.x + 10, Ty_up.y + 15);
 			
 			//brojevi na y-osi
 			for(int i = (int) Math.floor(y_down) + 1; i <= (int) Math.abs(y_up); i++)
@@ -62,8 +66,9 @@ public class Panel extends JPanel implements MouseWheelListener{
 				JFrameTocka Ty = coordinate_system_to_jframe(0, i);
 				if(i != 0) 
 					g.drawString(Integer.toString(i),
-							(int) Ty.x - 10, 
-							(int) Ty.y);
+							(int) Ty.x - 20, 
+							(int) Ty.y + 5);
+				g.drawLine(Ty.x - 5, Ty.y, Ty.x + 5, Ty.y);
 			}
 		}
 		
@@ -80,10 +85,14 @@ public class Panel extends JPanel implements MouseWheelListener{
 			{
 				JFrameTocka Tx = coordinate_system_to_jframe(i, 0);
 				g.drawString(Integer.toString(i),
-							(int) Tx.x,
-							(int) Tx.y + 12);
+							(int) Tx.x - 5,
+							(int) Tx.y + 20);
+				g.drawLine(Tx.x, Tx.y - 5, Tx.x, Tx.y + 5);
 			}
 		}
+		
+		g.setColor(new Color(95,0,160));
+		g.setStroke(new BasicStroke(3));
 		
 		//crtaj funkciju
 		for(int i = 0; i < funkcija.size() - 10; i++)
@@ -136,7 +145,7 @@ public class Panel extends JPanel implements MouseWheelListener{
 		for(int i = 0; i < Preciznost; i++)
 		{
 			double broj_x = x_left + ((double) i / (double) Preciznost) * Math.abs(x_right - x_left);
-			double broj_y = broj_x * broj_x;
+			double broj_y = Math.sin(broj_x);
 			
 			funkcija.add(new Tocka(broj_x, broj_y));
 		}
