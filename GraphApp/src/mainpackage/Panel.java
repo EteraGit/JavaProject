@@ -1,14 +1,18 @@
 package mainpackage;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.Vector;
 
 import javax.swing.JPanel;
 
+import parser.Parser;
+
 @SuppressWarnings("serial")
-public class Panel extends JPanel implements MouseWheelListener{
+public class Panel extends JPanel implements MouseWheelListener,MouseListener{
 	
 	public int WIDTH;
 	public int HEIGHT;
@@ -17,15 +21,12 @@ public class Panel extends JPanel implements MouseWheelListener{
 	public double y_down;
 	public double y_up;
 	public int Preciznost;
-	public int x;
-	public int y;
 	public double zoom;
 	public Vector<Tocka> funkcija;
+	public Parser parser;
 
 	public Panel(int width, int height) 
 	{
-		x = 10;
-		y = 10;
 		WIDTH = width;
 		HEIGHT = height;
 		x_left = -8.88;
@@ -39,7 +40,15 @@ public class Panel extends JPanel implements MouseWheelListener{
 		
 		postaviFunkciju();
 		
+		parser = new Parser();
+		
 		addMouseWheelListener(this);
+		addMouseListener(this);
+		
+		this.setFocusable(true);
+		this.requestFocusInWindow();
+		
+		this.addKeyListener(new KeyPressHandler());
 	}
 	
 	public void paintComponent(Graphics g1) 
@@ -103,40 +112,6 @@ public class Panel extends JPanel implements MouseWheelListener{
 					funkcija.get(i + 1).x > x_left && funkcija.get(i + 1).x < x_right)
 				g.drawLine(T1.x, T1.y, T2.x, T2.y);
 		}
-		
-		//pocetni pravokutnici
-		for(int i = 0; i < 10; i++)
-		{
-			g.setColor(new Color(i * 10,i * 15, i * 5));
-			g.fillRect(x + i * 10, y + i * 10, 200, 50);	
-		}
-				
-		x += 1;
-		y += 1;
-	}
-
-	@Override
-	public void mouseWheelMoved(MouseWheelEvent e) {
-		System.out.println(e.getWheelRotation());
-		System.out.println(e.getX() + "  " + e.getY());
-		System.out.println(jframe_to_coordinate_system(e.getX(), e.getY()).x + "  " + jframe_to_coordinate_system(e.getX(), e.getY()).y);
-		
-		if(e.getWheelRotation() < 0) //zoom in
-		{
-			x_right = x_right - Math.abs(x_right - jframe_to_coordinate_system(e.getX(), e.getY()).x) * zoom;
-			x_left = x_left + Math.abs(x_left - jframe_to_coordinate_system(e.getX(), e.getY()).x) * zoom;
-			y_up = y_up - Math.abs(y_up - jframe_to_coordinate_system(e.getX(), e.getY()).y) * zoom;
-			y_down = y_down + Math.abs(y_down - jframe_to_coordinate_system(e.getX(), e.getY()).y) * zoom;
-		}
-		else //zoom out
-		{
-			x_right = x_right + Math.abs(x_left - jframe_to_coordinate_system(e.getX(), e.getY()).x) * zoom;
-			x_left = x_left - Math.abs(x_right - jframe_to_coordinate_system(e.getX(), e.getY()).x) * zoom;
-			y_up = y_up + Math.abs(y_down - jframe_to_coordinate_system(e.getX(), e.getY()).y) * zoom;
-			y_down = y_down - Math.abs(y_up - jframe_to_coordinate_system(e.getX(), e.getY()).y) * zoom;
-		}
-		postaviFunkciju();
-		repaint();
 	}
 	
 	public void postaviFunkciju()
@@ -145,7 +120,7 @@ public class Panel extends JPanel implements MouseWheelListener{
 		for(int i = 0; i < Preciznost; i++)
 		{
 			double broj_x = x_left + ((double) i / (double) Preciznost) * Math.abs(x_right - x_left);
-			double broj_y = Math.sin(broj_x);
+			double broj_y = Math.sin(broj_x) * 6 + 1;
 			
 			funkcija.add(new Tocka(broj_x, broj_y));
 		}
@@ -163,5 +138,54 @@ public class Panel extends JPanel implements MouseWheelListener{
 		double new_x = x_left + Math.abs(x_right - x_left) * ((double) x / (double) WIDTH);
 		double new_y = y_up - Math.abs(y_up - y_down) * ((double) y / (double) HEIGHT);
 		return new Tocka(new_x, new_y);
+	}
+	
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		System.out.println(e.getWheelRotation());
+		System.out.println(e.getX() + "  " + e.getY());
+		System.out.println(jframe_to_coordinate_system(e.getX(), e.getY()).x + "  " + jframe_to_coordinate_system(e.getX(), e.getY()).y);
+		
+		if(e.getWheelRotation() < 0) //zoom in
+		{
+			x_right = x_right - Math.abs(x_right - jframe_to_coordinate_system(e.getX(), e.getY()).x) * zoom;
+			x_left = x_left + Math.abs(x_left - jframe_to_coordinate_system(e.getX(), e.getY()).x) * zoom;
+			y_up = y_up - Math.abs(y_up - jframe_to_coordinate_system(e.getX(), e.getY()).y) * zoom;
+			y_down = y_down + Math.abs(y_down - jframe_to_coordinate_system(e.getX(), e.getY()).y) * zoom;
+		}
+		else //zoom out
+		{
+			x_right = x_right + Math.abs(x_right - jframe_to_coordinate_system(e.getX(), e.getY()).x) * zoom;
+			x_left = x_left - Math.abs(x_left - jframe_to_coordinate_system(e.getX(), e.getY()).x) * zoom;
+			y_up = y_up + Math.abs(y_up - jframe_to_coordinate_system(e.getX(), e.getY()).y) * zoom;
+			y_down = y_down - Math.abs(y_down - jframe_to_coordinate_system(e.getX(), e.getY()).y) * zoom;
+		}
+		postaviFunkciju();
+		repaint();
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		
 	}
 }
