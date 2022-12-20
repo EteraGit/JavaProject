@@ -22,8 +22,9 @@ public class Panel extends JPanel implements MouseWheelListener,MouseListener{
 	public double y_up;
 	public int Preciznost;
 	public double zoom;
+	public int ClickX;
+	public int ClickY;
 	public Vector<Tocka> funkcija;
-	public Parser parser;
 
 	public Panel(int width, int height) 
 	{
@@ -39,8 +40,6 @@ public class Panel extends JPanel implements MouseWheelListener,MouseListener{
 		funkcija = new Vector<Tocka>();
 		
 		postaviFunkciju();
-		
-		parser = new Parser();
 		
 		addMouseWheelListener(this);
 		addMouseListener(this);
@@ -120,7 +119,7 @@ public class Panel extends JPanel implements MouseWheelListener,MouseListener{
 		for(int i = 0; i < Preciznost; i++)
 		{
 			double broj_x = x_left + ((double) i / (double) Preciznost) * Math.abs(x_right - x_left);
-			double broj_y = Math.sin(broj_x) * 6 + 1;
+			double broj_y = Math.sin(broj_x);
 			
 			funkcija.add(new Tocka(broj_x, broj_y));
 		}
@@ -142,10 +141,6 @@ public class Panel extends JPanel implements MouseWheelListener,MouseListener{
 	
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		System.out.println(e.getWheelRotation());
-		System.out.println(e.getX() + "  " + e.getY());
-		System.out.println(jframe_to_coordinate_system(e.getX(), e.getY()).x + "  " + jframe_to_coordinate_system(e.getX(), e.getY()).y);
-		
 		if(e.getWheelRotation() < 0) //zoom in
 		{
 			x_right = x_right - Math.abs(x_right - jframe_to_coordinate_system(e.getX(), e.getY()).x) * zoom;
@@ -166,17 +161,51 @@ public class Panel extends JPanel implements MouseWheelListener,MouseListener{
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-
+		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-
+		ClickX = e.getX();
+		ClickY = e.getY();
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-
+		Tocka T1 = jframe_to_coordinate_system(ClickX, ClickY);
+		Tocka T2 = jframe_to_coordinate_system(e.getX(), e.getY());
+		
+		if(T1.x > T2.x && T1.y > T2.y) //gore desno
+		{
+			x_right = x_right + (T1.x - T2.x);
+			x_left = x_left + (T1.x - T2.x);
+			y_up = y_up + (T1.y - T2.y);
+			y_down = y_down + (T1.y - T2.y);
+		}
+		else if(T1.x > T2.x && T1.y <= T2.y) //dolje desno
+		{
+			x_right = x_right + (T1.x - T2.x);
+			x_left = x_left + (T1.x - T2.x);
+			y_up = y_up - (T2.y - T1.y);
+			y_down = y_down - (T2.y - T1.y);
+		}
+		else if(T1.x <= T2.x && T1.y > T2.y) //gore lijevo
+		{
+			x_right = x_right - (T2.x - T1.x);
+			x_left = x_left - (T2.x - T1.x);
+			y_up = y_up + (T1.y - T2.y);
+			y_down = y_down + (T1.y - T2.y);
+		}
+		else if(T1.x <= T2.x && T1.y <= T2.y) // dolje lijevo
+		{
+			x_right = x_right - (T2.x - T1.x);
+			x_left = x_left - (T2.x - T1.x);
+			y_up = y_up - (T2.y - T1.y);
+			y_down = y_down - (T2.y - T1.y);
+		}
+		
+		postaviFunkciju();
+		repaint();
 	}
 
 	@Override

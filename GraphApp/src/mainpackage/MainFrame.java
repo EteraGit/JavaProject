@@ -59,7 +59,7 @@ public class MainFrame implements Runnable{
 		double timePerFrame = 1000000000.0 / FPS_SET;
 		long lastFrame = System.nanoTime();
 		long now = System.nanoTime();
-		System.out.println("FPS:");
+		//System.out.println("FPS:");
 
 		int frames = 0;
 		long lastCheck = System.currentTimeMillis();
@@ -75,7 +75,7 @@ public class MainFrame implements Runnable{
 
 			if (System.currentTimeMillis() - lastCheck >= 1000) {
 				lastCheck = System.currentTimeMillis();
-				System.out.println("FPS: " + frames);
+				//System.out.println("FPS: " + frames);
 				frames = 0;
 			}
 		}

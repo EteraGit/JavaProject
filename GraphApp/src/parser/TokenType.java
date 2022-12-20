@@ -10,6 +10,7 @@ public enum TokenType
 	TIMES("*"),
 	DIV("/"),
 	POW("^"),
+	DOT("."),
 	SIN("sin"),
 	COS("cos"),
 	TAN("tan"),
@@ -19,10 +20,10 @@ public enum TokenType
 	CEILING("ceil"),
 	FLOOR("floor"),
 	SQUARE_ROOT("sqrt"),
-	COMMA(","),
 	X("x"),
 	NUMBER(""),
-	NAME("");
+	NAME(""),
+	PRAZAN("null");
 	
 	public static final TokenType[] FUNCTIONS = 
 	{
@@ -35,5 +36,14 @@ public enum TokenType
 	private TokenType(String symbol) 
 	{
 		this.symbol = symbol;
+	}
+	
+	public static TokenType getTokenType(String name)
+	{
+		for(TokenType t : TokenType.values())
+		{
+			if(t.symbol.equals(name)) return t;
+		}
+		return PRAZAN;
 	}
 }
