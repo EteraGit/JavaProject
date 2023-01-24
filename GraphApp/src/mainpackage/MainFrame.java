@@ -9,6 +9,9 @@ import java.awt.Insets;
 import java.awt.color.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -94,6 +97,15 @@ public class MainFrame implements Runnable{
 		frame.setSize(WIDTH, HEIGHT);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+		frame.addComponentListener(new ComponentAdapter() {
+		    public void componentResized(ComponentEvent componentEvent) {
+		    	if(componentEvent.getID() == componentEvent.COMPONENT_RESIZED)
+		    	{
+		    		Panels.funkcijePanel.WIDTH = frame.getSize().width;
+		    		Panels.funkcijePanel.HEIGHT = frame.getSize().height;
+		    	}
+		    }
+		});
 		
 		thread = new Thread(this);
 		thread.start();
