@@ -1,19 +1,33 @@
 package mainpackage;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.color.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JButton;
+
+
 
 public class MainFrame implements Runnable{
 
 	private JFrame frame;
-	private JPanel mainPanel;
 	private final int WIDTH = 1280;
 	private final int HEIGHT = 720;
 	private final int FPS_SET = 120;
 	private Thread thread;
+	private JButton f;
+	private JButton m;
 
 	/**
 	 * Launch the application.
@@ -42,13 +56,44 @@ public class MainFrame implements Runnable{
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		mainPanel = new Panel(WIDTH, HEIGHT);
-		mainPanel.requestFocus();
+		frame = new JFrame();		
+		Panels.startPanel = new JPanel();
+		Panels.startPanel.setLayout(new BorderLayout(10, 10));	
+		Panels.mainPanel = new JPanel();
+		Panels.mainPanel.setBackground(new Color(255,192,203));	
+		Panels.funkcijePanel = new Panel(WIDTH, HEIGHT);	
+		Panels.matricePanel = new MPanel();
+		
+		f = new JButton("Funkcije");
+		m = new JButton("Matrice");
+		
+		f.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+					Panels.startPanel.remove(Panels.mainPanel);
+					Panels.startPanel.add(Panels.funkcijePanel, BorderLayout.CENTER);
+					Panels.startPanel.revalidate();
+					Panels.startPanel.repaint();
+			  } 
+			} );
+		m.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+					Panels.startPanel.remove(Panels.mainPanel);
+					Panels.startPanel.add(Panels.matricePanel, BorderLayout.CENTER);
+					Panels.startPanel.revalidate();
+					Panels.startPanel.repaint();
+			  } 
+			} );
+		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		Panels.startPanel.add(Panels.mainPanel, BorderLayout.CENTER);
+		Panels.mainPanel.add(f);
+		Panels.mainPanel.add(m);
+		
+		frame.add(Panels.startPanel);
 		frame.setSize(WIDTH, HEIGHT);
 		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().add(mainPanel);
+		frame.setVisible(true);
 		
 		thread = new Thread(this);
 		thread.start();
@@ -68,7 +113,7 @@ public class MainFrame implements Runnable{
 
 			now = System.nanoTime();
 			if (now - lastFrame >= timePerFrame) {
-				mainPanel.repaint();
+				Panels.funkcijePanel.repaint();
 				lastFrame = now;
 				frames++;
 			}

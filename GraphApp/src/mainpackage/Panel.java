@@ -1,12 +1,15 @@
 package mainpackage;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.Vector;
 
+import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import parser.Parser;
@@ -48,6 +51,26 @@ public class Panel extends JPanel implements MouseWheelListener,MouseListener{
 		this.requestFocusInWindow();
 		
 		this.addKeyListener(new KeyPressHandler());
+		
+		JButton h = new JButton("Home");
+		h.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+					System.out.println("Funkcije");
+					hpanel();
+			  } 
+			} );
+		this.setLayout(null);
+		h.setBounds(20,20,100,50);
+		
+		this.add(h);
+	}
+	
+	public void hpanel()
+	{
+		Panels.startPanel.remove(Panels.funkcijePanel);
+		Panels.startPanel.add(Panels.mainPanel, BorderLayout.CENTER);
+		Panels.startPanel.revalidate();
+		Panels.startPanel.repaint();
 	}
 	
 	public void paintComponent(Graphics g1) 
