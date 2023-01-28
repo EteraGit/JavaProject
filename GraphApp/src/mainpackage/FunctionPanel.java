@@ -15,10 +15,8 @@ import javax.swing.JPanel;
 import parser.Parser;
 
 @SuppressWarnings("serial")
-public class Panel extends JPanel implements MouseWheelListener,MouseListener{
+public class FunctionPanel extends JPanel implements MouseWheelListener,MouseListener{
 	
-	public int WIDTH;
-	public int HEIGHT;
 	public double x_left;
 	public double x_right;
 	public double y_down;
@@ -29,10 +27,8 @@ public class Panel extends JPanel implements MouseWheelListener,MouseListener{
 	public int ClickY;
 	public Vector<Tocka> funkcija;
 
-	public Panel(int width, int height) 
+	public FunctionPanel() 
 	{
-		WIDTH = width;
-		HEIGHT = height;
 		x_left = -8.88;
 		x_right = 8.88;
 		y_down = -5;
@@ -47,30 +43,23 @@ public class Panel extends JPanel implements MouseWheelListener,MouseListener{
 		addMouseWheelListener(this);
 		addMouseListener(this);
 		
-		this.setFocusable(true);
-		this.requestFocusInWindow();
-		
 		this.addKeyListener(new KeyPressHandler());
 		
-		JButton h = new JButton("Home");
-		h.addActionListener(new ActionListener() { 
+		JButton homeButton = new JButton("Home");
+		homeButton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
-					System.out.println("Funkcije");
-					hpanel();
+					Panels.startPanel.remove(Panels.funkcijePanel);
+					Panels.startPanel.add(Panels.mainPanel, BorderLayout.CENTER);
+					Panels.mainPanel.setFocusable(true);
+					Panels.mainPanel.requestFocusInWindow();
+					Panels.startPanel.revalidate();
+					Panels.startPanel.repaint();
 			  } 
 			} );
 		this.setLayout(null);
-		h.setBounds(20,20,100,50);
+		homeButton.setBounds(20,20,100,50);
 		
-		this.add(h);
-	}
-	
-	public void hpanel()
-	{
-		Panels.startPanel.remove(Panels.funkcijePanel);
-		Panels.startPanel.add(Panels.mainPanel, BorderLayout.CENTER);
-		Panels.startPanel.revalidate();
-		Panels.startPanel.repaint();
+		this.add(homeButton);
 	}
 	
 	public void paintComponent(Graphics g1) 
@@ -150,15 +139,15 @@ public class Panel extends JPanel implements MouseWheelListener,MouseListener{
 	
 	public JFrameTocka coordinate_system_to_jframe(double x, double y)
 	{
-		double new_x = WIDTH * (Math.abs(x - x_left) / Math.abs(x_right - x_left));
-		double new_y = HEIGHT * (Math.abs(y - y_up) / Math.abs(y_up - y_down));
+		double new_x = Panels.WIDTH * (Math.abs(x - x_left) / Math.abs(x_right - x_left));
+		double new_y = Panels.HEIGHT * (Math.abs(y - y_up) / Math.abs(y_up - y_down));
 		return new JFrameTocka((int) new_x, (int) new_y);
 	}
 	
 	public Tocka jframe_to_coordinate_system(int x, int y)
 	{
-		double new_x = x_left + Math.abs(x_right - x_left) * ((double) x / (double) WIDTH);
-		double new_y = y_up - Math.abs(y_up - y_down) * ((double) y / (double) HEIGHT);
+		double new_x = x_left + Math.abs(x_right - x_left) * ((double) x / (double) Panels.WIDTH);
+		double new_y = y_up - Math.abs(y_up - y_down) * ((double) y / (double) Panels.HEIGHT);
 		return new Tocka(new_x, new_y);
 	}
 	

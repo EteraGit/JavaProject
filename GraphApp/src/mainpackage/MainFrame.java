@@ -3,6 +3,7 @@ package mainpackage;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -18,6 +19,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+
+import matrices.DeterminantPanel;
+
 import javax.swing.JButton;
 
 
@@ -25,12 +29,12 @@ import javax.swing.JButton;
 public class MainFrame implements Runnable{
 
 	private JFrame frame;
-	private final int WIDTH = 1280;
-	private final int HEIGHT = 720;
+	private final int WIDTH = 600;
+	private final int HEIGHT = 400;
 	private final int FPS_SET = 120;
 	private Thread thread;
-	private JButton f;
-	private JButton m;
+	private JButton funkcijeButton;
+	private JButton matriceButton;
 
 	/**
 	 * Launch the application.
@@ -64,24 +68,29 @@ public class MainFrame implements Runnable{
 		Panels.startPanel.setLayout(new BorderLayout(10, 10));	
 		Panels.mainPanel = new JPanel();
 		Panels.mainPanel.setBackground(new Color(255,192,203));	
-		Panels.funkcijePanel = new Panel(WIDTH, HEIGHT);	
-		Panels.matricePanel = new MPanel();
+		Panels.funkcijePanel = new FunctionPanel();	
+		Panels.matricePanel = new MatrixPanel();
+		Panels.determinantPanel = new DeterminantPanel();
 		
-		f = new JButton("Funkcije");
-		m = new JButton("Matrice");
+		funkcijeButton = new JButton("Funkcije");
+		matriceButton = new JButton("Matrice");
 		
-		f.addActionListener(new ActionListener() { 
+		funkcijeButton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 					Panels.startPanel.remove(Panels.mainPanel);
 					Panels.startPanel.add(Panels.funkcijePanel, BorderLayout.CENTER);
+					Panels.funkcijePanel.setFocusable(true);
+					Panels.funkcijePanel.requestFocusInWindow();
 					Panels.startPanel.revalidate();
 					Panels.startPanel.repaint();
 			  } 
 			} );
-		m.addActionListener(new ActionListener() { 
+		matriceButton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 					Panels.startPanel.remove(Panels.mainPanel);
 					Panels.startPanel.add(Panels.matricePanel, BorderLayout.CENTER);
+					Panels.matricePanel.setFocusable(true);
+					Panels.matricePanel.requestFocusInWindow();
 					Panels.startPanel.revalidate();
 					Panels.startPanel.repaint();
 			  } 
@@ -90,8 +99,9 @@ public class MainFrame implements Runnable{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		Panels.startPanel.add(Panels.mainPanel, BorderLayout.CENTER);
-		Panels.mainPanel.add(f);
-		Panels.mainPanel.add(m);
+		Panels.mainPanel.add(funkcijeButton);
+		Panels.mainPanel.add(matriceButton);
+		
 		
 		frame.add(Panels.startPanel);
 		frame.setSize(WIDTH, HEIGHT);
@@ -101,8 +111,8 @@ public class MainFrame implements Runnable{
 		    public void componentResized(ComponentEvent componentEvent) {
 		    	if(componentEvent.getID() == componentEvent.COMPONENT_RESIZED)
 		    	{
-		    		Panels.funkcijePanel.WIDTH = frame.getSize().width;
-		    		Panels.funkcijePanel.HEIGHT = frame.getSize().height;
+		    		Panels.WIDTH = frame.getSize().width;
+		    		Panels.HEIGHT = frame.getSize().height;
 		    	}
 		    }
 		});
