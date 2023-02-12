@@ -26,6 +26,8 @@ public class TokenList
 	
 	public Token remove(int i) {return tokens.remove(i);}
 	
+	public void clear() {tokens = new ArrayList<Token>();}
+	
 	@Override
 	public String toString() 
 	{

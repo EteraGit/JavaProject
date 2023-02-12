@@ -68,8 +68,8 @@ public class MainFrame implements Runnable{
 		Panels.startPanel.setLayout(new BorderLayout(10, 10));	
 		Panels.mainPanel = new JPanel();
 		Panels.mainPanel.setBackground(new Color(255,192,203));	
-		Panels.funkcijePanel = new FunctionPanel();	
-		Panels.matricePanel = new MatrixPanel();
+		Panels.functionsPanel = new FunctionPanel();	
+		Panels.matrixPanel = new MatrixPanel();
 		Panels.determinantPanel = new DeterminantPanel();
 		
 		funkcijeButton = new JButton("Funkcije");
@@ -78,9 +78,9 @@ public class MainFrame implements Runnable{
 		funkcijeButton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 					Panels.startPanel.remove(Panels.mainPanel);
-					Panels.startPanel.add(Panels.funkcijePanel, BorderLayout.CENTER);
-					Panels.funkcijePanel.setFocusable(true);
-					Panels.funkcijePanel.requestFocusInWindow();
+					Panels.startPanel.add(Panels.functionsPanel, BorderLayout.CENTER);
+					Panels.functionsPanel.setFocusable(true);
+					Panels.functionsPanel.requestFocusInWindow();
 					Panels.startPanel.revalidate();
 					Panels.startPanel.repaint();
 			  } 
@@ -88,9 +88,9 @@ public class MainFrame implements Runnable{
 		matriceButton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 					Panels.startPanel.remove(Panels.mainPanel);
-					Panels.startPanel.add(Panels.matricePanel, BorderLayout.CENTER);
-					Panels.matricePanel.setFocusable(true);
-					Panels.matricePanel.requestFocusInWindow();
+					Panels.startPanel.add(Panels.matrixPanel, BorderLayout.CENTER);
+					Panels.matrixPanel.setFocusable(true);
+					Panels.matrixPanel.requestFocusInWindow();
 					Panels.startPanel.revalidate();
 					Panels.startPanel.repaint();
 			  } 
@@ -135,7 +135,7 @@ public class MainFrame implements Runnable{
 
 			now = System.nanoTime();
 			if (now - lastFrame >= timePerFrame) {
-				Panels.funkcijePanel.repaint();
+				Panels.functionsPanel.repaint();
 				lastFrame = now;
 				frames++;
 			}

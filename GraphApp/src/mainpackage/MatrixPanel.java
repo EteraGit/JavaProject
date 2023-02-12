@@ -18,7 +18,7 @@ public class MatrixPanel extends JPanel{
 		JButton homeButton = new JButton("Home");
 		homeButton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
-					Panels.startPanel.remove(Panels.matricePanel);
+					Panels.startPanel.remove(Panels.matrixPanel);
 					Panels.startPanel.add(Panels.mainPanel, BorderLayout.CENTER);
 					Panels.mainPanel.setFocusable(true);
 					Panels.mainPanel.requestFocusInWindow();
@@ -30,7 +30,7 @@ public class MatrixPanel extends JPanel{
 		JButton determinantButton = new JButton("Determinant");
 		determinantButton.addActionListener(new ActionListener() {
 			  public void actionPerformed(ActionEvent e) { 
-					Panels.startPanel.remove(Panels.matricePanel);
+					Panels.startPanel.remove(Panels.matrixPanel);
 					Panels.startPanel.add(Panels.determinantPanel, BorderLayout.CENTER);
 					Panels.determinantPanel.setFocusable(true);
 					Panels.determinantPanel.requestFocusInWindow();

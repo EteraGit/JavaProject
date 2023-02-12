@@ -50,7 +50,7 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 		matrixButton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 					Panels.startPanel.remove(Panels.determinantPanel);
-					Panels.startPanel.add(Panels.matricePanel, BorderLayout.CENTER);
+					Panels.startPanel.add(Panels.matrixPanel, BorderLayout.CENTER);
 					Panels.mainPanel.setFocusable(true);
 					Panels.mainPanel.requestFocusInWindow();
 					Panels.startPanel.revalidate();

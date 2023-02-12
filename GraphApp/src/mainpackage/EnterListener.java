@@ -7,24 +7,25 @@ import java.util.List;
 
 import ast.Expression;
 import parser.Parser;
-import parser.Token;
 import parser.TokenList;
-import parser.TokenType;
 
-public class KeyPressHandler extends KeyAdapter {
-	
-	public Parser parser;
-	
-	public KeyPressHandler() 
+public class EnterListener extends KeyAdapter{
+
+	Parser parser;
+	public EnterListener(Parser parser)
 	{
-		parser = new Parser();
+		this.parser = parser;
 	}
 	
 	@Override
-	public void keyPressed(KeyEvent event)
-	{
-		if(event.getKeyCode() == KeyEvent.VK_ENTER)
-		{						
+	public void keyTyped(KeyEvent e) {
+
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if(e.getKeyCode() == KeyEvent.VK_ENTER)
+		{
 			TokenList Tokens = parser.Lekser(Panels.functionsPanel.functionInput.getText());
 			
 			Expression expression = parser.Parse(Tokens);
@@ -43,16 +44,11 @@ public class KeyPressHandler extends KeyAdapter {
 			Panels.functionsPanel.setFunction(newFunction);
 		}
 	}
-	
+
 	@Override
-	public void keyReleased(KeyEvent event)
-	{
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
-	
-	@Override
-	public void keyTyped(KeyEvent event)
-	{
-		
-	}
+
 }

@@ -1,5 +1,8 @@
 package parser;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public enum TokenType 
 {
 	OPENED("("),
@@ -25,11 +28,8 @@ public enum TokenType
 	NAME(""),
 	PRAZAN("null");
 	
-	public static final TokenType[] FUNCTIONS = 
-	{
-		SIN, COS, TAN, CTG, SQUARE_ROOT,
-		CEILING, FLOOR, LOG, ABS
-	};
+	public static final List<TokenType> FUNCTIONS = new ArrayList<TokenType>
+	(List.of(SIN, COS, TAN, CTG, SQUARE_ROOT,CEILING, FLOOR, LOG, ABS));
 	
 	public final String symbol;
 	

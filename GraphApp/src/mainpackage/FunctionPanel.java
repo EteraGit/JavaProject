@@ -3,16 +3,22 @@ package mainpackage;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
+import ast.Expression;
 import parser.Parser;
+import parser.TokenList;
 
 @SuppressWarnings("serial")
 public class FunctionPanel extends JPanel implements MouseWheelListener,MouseListener{
@@ -25,7 +31,9 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 	public double zoom;
 	public int ClickX;
 	public int ClickY;
-	public Vector<Tocka> funkcija;
+	public List<Tocka> function;
+	public Parser parser = new Parser();
+	public JTextField functionInput;
 
 	public FunctionPanel() 
 	{
@@ -36,9 +44,7 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 		zoom = 0.1;
 		Preciznost = 1000;
 		
-		funkcija = new Vector<Tocka>();
-		
-		postaviFunkciju();
+		setInitialFunction();
 		
 		addMouseWheelListener(this);
 		addMouseListener(this);
@@ -48,7 +54,7 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 		JButton homeButton = new JButton("Home");
 		homeButton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
-					Panels.startPanel.remove(Panels.funkcijePanel);
+					Panels.startPanel.remove(Panels.functionsPanel);
 					Panels.startPanel.add(Panels.mainPanel, BorderLayout.CENTER);
 					Panels.mainPanel.setFocusable(true);
 					Panels.mainPanel.requestFocusInWindow();
@@ -56,12 +62,18 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 					Panels.startPanel.repaint();
 			  } 
 			} );
+		
+		functionInput = new JTextField();
+		functionInput.addKeyListener(new EnterListener(parser));
+		
 		this.setLayout(null);
 		homeButton.setBounds(20,20,100,50);
+		functionInput.setBounds(150,30,300,30);
 		
 		this.add(homeButton);
+		this.add(functionInput);
 	}
-	
+
 	public void paintComponent(Graphics g1) 
 	{
 		super.paintComponent(g1);
@@ -115,26 +127,31 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 		g.setStroke(new BasicStroke(3));
 		
 		//crtaj funkciju
-		for(int i = 0; i < funkcija.size() - 10; i++)
+		for(int i = 0; i < function.size() - 10; i++)
 		{
-			JFrameTocka T1 = coordinate_system_to_jframe(funkcija.get(i).x, funkcija.get(i).y);
-			JFrameTocka T2 = coordinate_system_to_jframe(funkcija.get(i + 1).x, funkcija.get(i + 1).y);
-			if(funkcija.get(i + 1).y > y_down && funkcija.get(i + 1).y < y_up &&
-					funkcija.get(i + 1).x > x_left && funkcija.get(i + 1).x < x_right)
+			JFrameTocka T1 = coordinate_system_to_jframe(function.get(i).x, function.get(i).y);
+			JFrameTocka T2 = coordinate_system_to_jframe(function.get(i + 1).x, function.get(i + 1).y);
+			if(function.get(i + 1).y > y_down && function.get(i + 1).y < y_up &&
+					function.get(i + 1).x > x_left && function.get(i + 1).x < x_right)
 				g.drawLine(T1.x, T1.y, T2.x, T2.y);
 		}
 	}
 	
-	public void postaviFunkciju()
+	private void setInitialFunction() 
 	{
-		funkcija.clear();
+		function = new ArrayList<Tocka>();
 		for(int i = 0; i < Preciznost; i++)
 		{
 			double broj_x = x_left + ((double) i / (double) Preciznost) * Math.abs(x_right - x_left);
 			double broj_y = Math.sin(broj_x);
 			
-			funkcija.add(new Tocka(broj_x, broj_y));
+			function.add(new Tocka(broj_x, broj_y));
 		}
+	}
+	
+	public void setFunction(List<Tocka> newFunction)
+	{
+		function = newFunction;
 	}
 	
 	public JFrameTocka coordinate_system_to_jframe(double x, double y)
@@ -167,7 +184,8 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 			y_up = y_up + Math.abs(y_up - jframe_to_coordinate_system(e.getX(), e.getY()).y) * zoom;
 			y_down = y_down - Math.abs(y_down - jframe_to_coordinate_system(e.getX(), e.getY()).y) * zoom;
 		}
-		postaviFunkciju();
+		
+		parse();
 		repaint();
 	}
 
@@ -216,8 +234,28 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 			y_down = y_down - (T2.y - T1.y);
 		}
 		
-		postaviFunkciju();
+		parse();
 		repaint();
+	}
+
+	private void parse() 
+	{
+		TokenList Tokens = parser.Lekser(functionInput.getText());
+		
+		Expression expression = parser.Parse(Tokens);
+		
+		List<Tocka> newFunction = new ArrayList<Tocka>();
+		for(int i = 0; i < Preciznost; i++)
+		{
+			double broj_x = x_left +
+							((double) i / (double) Preciznost) *
+							Math.abs(x_right - x_left);
+			double broj_y = expression.Compute(broj_x);
+			
+			newFunction.add(new Tocka(broj_x, broj_y));
+		}
+		
+		setFunction(newFunction);
 	}
 
 	@Override
