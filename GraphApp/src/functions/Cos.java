@@ -1,10 +1,10 @@
 package functions;
 
-public class Sin extends Function{
+public class Cos extends Function{
 	
 	@Override
 	public double EvaluateAt(double x)
 	{
-		return Math.sin(x);
+		return Math.cos(x);
 	}
 }

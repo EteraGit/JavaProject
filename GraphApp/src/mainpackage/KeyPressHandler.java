@@ -7,9 +7,7 @@ import java.util.List;
 
 import ast.Expression;
 import parser.Parser;
-import parser.Token;
 import parser.TokenList;
-import parser.TokenType;
 
 public class KeyPressHandler extends KeyAdapter {
 	

@@ -3,22 +3,12 @@ package mainpackage;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.color.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
 
 import matrices.DeterminantPanel;
 
@@ -108,7 +98,8 @@ public class MainFrame implements Runnable{
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		frame.addComponentListener(new ComponentAdapter() {
-		    public void componentResized(ComponentEvent componentEvent) {
+		    @SuppressWarnings("static-access")
+			public void componentResized(ComponentEvent componentEvent) {
 		    	if(componentEvent.getID() == componentEvent.COMPONENT_RESIZED)
 		    	{
 		    		Panels.WIDTH = frame.getSize().width;
@@ -126,9 +117,7 @@ public class MainFrame implements Runnable{
 		double timePerFrame = 1000000000.0 / FPS_SET;
 		long lastFrame = System.nanoTime();
 		long now = System.nanoTime();
-		//System.out.println("FPS:");
-
-		int frames = 0;
+		
 		long lastCheck = System.currentTimeMillis();
 
 		while (true) {
@@ -137,13 +126,10 @@ public class MainFrame implements Runnable{
 			if (now - lastFrame >= timePerFrame) {
 				Panels.functionsPanel.repaint();
 				lastFrame = now;
-				frames++;
 			}
 
 			if (System.currentTimeMillis() - lastCheck >= 1000) {
 				lastCheck = System.currentTimeMillis();
-				//System.out.println("FPS: " + frames);
-				frames = 0;
 			}
 		}
 		

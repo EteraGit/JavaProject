@@ -22,14 +22,14 @@ public enum TokenType
 	ABS("abs"),
 	CEILING("ceil"),
 	FLOOR("floor"),
-	SQUARE_ROOT("sqrt"),
+	SQRT("sqrt"),
 	X("x"),
 	NUMBER(""),
 	NAME(""),
-	PRAZAN("null");
+	EMPTY("null");
 	
 	public static final List<TokenType> FUNCTIONS = new ArrayList<TokenType>
-	(List.of(SIN, COS, TAN, CTG, SQUARE_ROOT,CEILING, FLOOR, LOG, ABS));
+	(List.of(SIN, COS, TAN, CTG, SQRT, CEILING, FLOOR, LOG, ABS));
 	
 	public final String symbol;
 	
@@ -44,6 +44,6 @@ public enum TokenType
 		{
 			if(t.symbol.equals(name)) return t;
 		}
-		return PRAZAN;
+		return EMPTY;
 	}
 }

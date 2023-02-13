@@ -1,4 +1,4 @@
-package ast;
+package functions;
 
 public class Function {
 	

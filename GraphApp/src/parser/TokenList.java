@@ -24,9 +24,22 @@ public class TokenList
 	
 	public void insert(int i, Token token) {tokens.add(i, token);}
 	
+	public void addAll(int i, List<Token> newTokens) { tokens.addAll(i, newTokens); }
+	
 	public Token remove(int i) {return tokens.remove(i);}
 	
+	public List<Token> getList() { return tokens; }
+	
 	public void clear() {tokens = new ArrayList<Token>();}
+	
+	public int numTokensOfType(TokenType type) { 
+		int count = 0;
+		for(Token token : tokens)
+		{
+			if(type == token.type) count++;
+		}
+		return count;
+	}
 	
 	@Override
 	public String toString() 

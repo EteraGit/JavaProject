@@ -1,4 +1,4 @@
-package parser;
+package mainpackage;
 
 import javax.swing.JOptionPane;
 

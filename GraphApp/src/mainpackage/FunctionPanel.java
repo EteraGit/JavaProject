@@ -3,10 +3,9 @@ package mainpackage;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
@@ -14,6 +13,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import ast.Expression;
@@ -21,7 +21,7 @@ import parser.Parser;
 import parser.TokenList;
 
 @SuppressWarnings("serial")
-public class FunctionPanel extends JPanel implements MouseWheelListener,MouseListener{
+public class FunctionPanel extends JPanel implements MouseWheelListener,MouseListener,MouseMotionListener{
 	
 	public double x_left;
 	public double x_right;
@@ -34,6 +34,7 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 	public List<Tocka> function;
 	public Parser parser = new Parser();
 	public JTextField functionInput;
+	public JTextArea functionNames;
 
 	public FunctionPanel() 
 	{
@@ -42,12 +43,13 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 		y_down = -5;
 		y_up = 5;
 		zoom = 0.1;
-		Preciznost = 1000;
+		Preciznost = 10000;
 		
 		setInitialFunction();
 		
 		addMouseWheelListener(this);
 		addMouseListener(this);
+		addMouseMotionListener(this);
 		
 		this.addKeyListener(new KeyPressHandler());
 		
@@ -66,12 +68,16 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 		functionInput = new JTextField();
 		functionInput.addKeyListener(new EnterListener(parser));
 		
+		functionNames = new JTextArea();
+		
 		this.setLayout(null);
 		homeButton.setBounds(20,20,100,50);
 		functionInput.setBounds(150,30,300,30);
+		functionNames.setBounds(20,80,100,100);
 		
 		this.add(homeButton);
 		this.add(functionInput);
+		this.add(functionNames);
 	}
 
 	public void paintComponent(Graphics g1) 
@@ -84,7 +90,7 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 		g.setStroke(new BasicStroke(2));
 		g.setFont(new Font("default", Font.BOLD, 15));
 		
-		//crtaj y-os
+		//draw y-axis
 		if(x_right > 0 && x_left < 0)
 		{
 			JFrameTocka Ty_up = coordinate_system_to_jframe(0, y_up);
@@ -92,7 +98,7 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 			g.drawLine(Ty_up.x, Ty_up.y, Ty_down.x, Ty_down.y);
 			g.drawString("y", Ty_up.x + 10, Ty_up.y + 15);
 			
-			//brojevi na y-osi
+			//numbers on y-axis
 			for(int i = (int) Math.floor(y_down) + 1; i <= (int) Math.abs(y_up); i++)
 			{
 				JFrameTocka Ty = coordinate_system_to_jframe(0, i);
@@ -104,7 +110,7 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 			}
 		}
 		
-		//crtaj x-os
+		//draw x-axis
 		if(y_up > 0 && y_down < 0)
 		{
 			JFrameTocka Tx_right = coordinate_system_to_jframe(x_right, 0);
@@ -112,7 +118,7 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 			g.drawLine(Tx_right.x, Tx_right.y, Tx_left.x, Tx_left.y);
 			g.drawString("x", Tx_right.x - 25, Tx_right.y + 10);
 			
-			//brojevi na x-osi
+			//numbers on x-axis
 			for(int i = (int) Math.floor(x_left) + 1; i <= (int) Math.abs(x_right); i++)
 			{
 				JFrameTocka Tx = coordinate_system_to_jframe(i, 0);
@@ -126,7 +132,7 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 		g.setColor(new Color(95,0,160));
 		g.setStroke(new BasicStroke(3));
 		
-		//crtaj funkciju
+		//draw function
 		for(int i = 0; i < function.size() - 10; i++)
 		{
 			JFrameTocka T1 = coordinate_system_to_jframe(function.get(i).x, function.get(i).y);
@@ -143,7 +149,7 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 		for(int i = 0; i < Preciznost; i++)
 		{
 			double broj_x = x_left + ((double) i / (double) Preciznost) * Math.abs(x_right - x_left);
-			double broj_y = Math.sin(broj_x);
+			double broj_y = 0;
 			
 			function.add(new Tocka(broj_x, broj_y));
 		}
@@ -202,6 +208,41 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+
+	}
+
+	private void parse() 
+	{
+		TokenList Tokens = parser.Lekser(functionInput.getText());
+		
+		Expression expression = parser.Parse(Tokens);
+		
+		List<Tocka> newFunction = new ArrayList<Tocka>();
+		for(int i = 0; i < Preciznost; i++)
+		{
+			double broj_x = x_left +
+							((double) i / (double) Preciznost) *
+							Math.abs(x_right - x_left);
+			double broj_y = expression.Compute(broj_x);
+			
+			newFunction.add(new Tocka(broj_x, broj_y));
+		}
+		
+		setFunction(newFunction);
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
 		Tocka T1 = jframe_to_coordinate_system(ClickX, ClickY);
 		Tocka T2 = jframe_to_coordinate_system(e.getX(), e.getY());
 		
@@ -234,37 +275,15 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 			y_down = y_down - (T2.y - T1.y);
 		}
 		
+		ClickX = e.getX();
+		ClickY = e.getY();
+		
 		parse();
 		repaint();
 	}
 
-	private void parse() 
-	{
-		TokenList Tokens = parser.Lekser(functionInput.getText());
-		
-		Expression expression = parser.Parse(Tokens);
-		
-		List<Tocka> newFunction = new ArrayList<Tocka>();
-		for(int i = 0; i < Preciznost; i++)
-		{
-			double broj_x = x_left +
-							((double) i / (double) Preciznost) *
-							Math.abs(x_right - x_left);
-			double broj_y = expression.Compute(broj_x);
-			
-			newFunction.add(new Tocka(broj_x, broj_y));
-		}
-		
-		setFunction(newFunction);
-	}
-
 	@Override
-	public void mouseEntered(MouseEvent e) {
-		
-	}
+	public void mouseMoved(MouseEvent e) {
 
-	@Override
-	public void mouseExited(MouseEvent e) {
-		
 	}
 }

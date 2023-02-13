@@ -1,42 +1,29 @@
 package ast;
 
-import functions.Linear;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Factor {
 	
-	public boolean isLinear;
-	public Linear Lin;
-	public Function Func;
-	public Expression Expr;
+	public List<Power> Powers;
 	
 	public Factor()
 	{
-		this.isLinear = true;
-		this.Lin = new Linear();
+		this.Powers = new ArrayList<Power>();
 	}
 	
-	public Factor(Linear lin)
+	public Factor(List<Power> Powers)
 	{
-		this.isLinear = true;
-		this.Lin = lin;
-	}
-	
-	public Factor(Function function, Expression expression)
-	{
-		this.isLinear = false;
-		this.Func = function;
-		this.Expr = expression;
+		this.Powers = Powers;
 	}
 	
 	public double Compute(double x)
-	{
-		if(isLinear)
+	{		
+		double pow = 1;
+		for(int i = Powers.size() - 1; i >= 0; i--)
 		{
-			return Lin.EvaluateAt(x);
+			pow = Math.pow(Powers.get(i).Compute(x), pow);
 		}
-		else
-		{
-			return Func.EvaluateAt(Expr.Compute(x));
-		}
+		return pow;		
 	}
 }
