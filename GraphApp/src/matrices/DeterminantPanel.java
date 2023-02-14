@@ -175,8 +175,8 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 		g.setStroke(new BasicStroke(2));
 		g.drawRect(topLeft.x, 2 * toolBar.getHeight(), height, height);
 		g.setColor(new Color(211,211,211));
-		g.fillRect(topLeft.x + highlightedSquare.x * squareLength,
-				   topLeft.y + highlightedSquare.y * squareLength, squareLength, squareLength);
+		g.fillRect(topLeft.x + highlightedSquare.y * squareLength,
+				   topLeft.y + highlightedSquare.x * squareLength, squareLength, squareLength);
 		g.setColor(new Color(0,0,0));
 		
 		for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
@@ -210,8 +210,8 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 					&& e.getY() >= topLeft.y + i * squareLength
 					&& e.getY() < topLeft.y + (i+1) * squareLength)
 					{
-						highlightedSquare.x = j;
-						highlightedSquare.y = i;
+						highlightedSquare.x = i;
+						highlightedSquare.y = j;
 						matrix[i][j] = "0";
 						repaint();
 						return;
@@ -232,8 +232,8 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 					&& e.getY() >= topLeft.y + i * squareLength
 					&& e.getY() < topLeft.y + (i+1) * squareLength)
 					{
-						highlightedSquare.x = j;
-						highlightedSquare.y = i;
+						highlightedSquare.x = i;
+						highlightedSquare.y = j;
 						repaint();
 						return;
 					}
