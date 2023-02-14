@@ -61,6 +61,7 @@ public class MatrixPanel extends JPanel{
 			  } 
 		});
 		
+
 		JButton multiplicationButton = new JButton("Multiplication");
 		multiplicationButton.addActionListener(new ActionListener() {
 			  public void actionPerformed(ActionEvent e) { 
@@ -68,13 +69,39 @@ public class MatrixPanel extends JPanel{
 					Panels.startPanel.add(Panels.multiplicationPanel, BorderLayout.CENTER);
 					Panels.multiplicationPanel.setFocusable(true);
 					Panels.multiplicationPanel.requestFocusInWindow();
+			  }
+		});
+		JButton subtractionButton = new JButton("Subtraction");
+		subtractionButton.addActionListener(new ActionListener() {
+			  public void actionPerformed(ActionEvent e) { 
+					Panels.startPanel.remove(Panels.matrixPanel);
+					Panels.startPanel.add(Panels.subtractionPanel, BorderLayout.CENTER);
+					Panels.subtractionPanel.setFocusable(true);
+					Panels.subtractionPanel.requestFocusInWindow();
 					Panels.startPanel.revalidate();
 					Panels.startPanel.repaint();
 			  } 
 		});
 		
+		JButton inverseButton = new JButton("Inverse");
+		inverseButton.addActionListener(new ActionListener() {
+			  public void actionPerformed(ActionEvent e) { 
+					Panels.startPanel.remove(Panels.matrixPanel);
+					Panels.startPanel.add(Panels.inversePanel, BorderLayout.CENTER);
+					Panels.inversePanel.setFocusable(true);
+					Panels.inversePanel.requestFocusInWindow();
+
+					Panels.startPanel.revalidate();
+					Panels.startPanel.repaint();
+			  } 
+		});
+		
+
 		this.add(multiplicationButton);
+
 		this.add(additionButton);
+		this.add(subtractionButton);
+		this.add(inverseButton);
 		this.add(transposingButton);
 		this.add(determinantButton);
 		this.add(homeButton);
