@@ -12,8 +12,16 @@ public class SubtractionKeyHandler extends KeyAdapter{
 	@Override
 	public void keyPressed(KeyEvent event)
 	{
-		if(Character.getNumericValue(event.getKeyChar()) < 10) key = Character.getNumericValue(event.getKeyChar());
-		Panels.subtractionPanel.receiveKey(key);
+		if(Character.getNumericValue(event.getKeyChar()) >= 0 && Character.getNumericValue(event.getKeyChar()) < 10) 
+		{
+			key = Character.getNumericValue(event.getKeyChar());
+			Panels.subtractionPanel.receiveKey(key);
+		}
+		else if(event.getKeyChar() == '-')
+		{
+			Panels.subtractionPanel.receiveKeyChar('-');
+		}
+
 		Panels.subtractionPanel.revalidate();
 		Panels.subtractionPanel.repaint();
 	}

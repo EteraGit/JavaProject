@@ -36,7 +36,8 @@ public class MultiplicationPanel extends JPanel implements MouseListener{
 	MultiplicationKeyHandler keyHandler = null;
 	JButton calculateMulti;
 	int length;
-	int[][] matrixL, matrixR, matrixResult;
+	String[][] matrixL, matrixR;
+	int[][] matrixResult;
 	double offset = 6.5;
 	boolean resultPressed;
 	boolean started = false;
@@ -73,10 +74,11 @@ public class MultiplicationPanel extends JPanel implements MouseListener{
             public void actionPerformed(ActionEvent e) {
             	if(!rowsL.getText().equals("") && !columnsL.getText().equals("") && !rowsR.getText().equals("") && !columnsR.getText().equals(""))
             	{
-            		matrixL = new int[Integer.parseInt(rowsL.getText())][Integer.parseInt(columnsL.getText())];
-            		matrixR = new int[Integer.parseInt(rowsR.getText())][Integer.parseInt(columnsR.getText())];
+            		matrixL = new String[Integer.parseInt(rowsL.getText())][Integer.parseInt(columnsL.getText())];
+            		matrixR = new String[Integer.parseInt(rowsR.getText())][Integer.parseInt(columnsR.getText())];
             		matrixResult = new int[Integer.parseInt(rowsL.getText())][Integer.parseInt(columnsR.getText())];
-            		
+            		setMatrixL();
+            		setMatrixR();
             		resultPressed = false;
             		repaint();
             	}
@@ -113,7 +115,29 @@ public class MultiplicationPanel extends JPanel implements MouseListener{
 		addMouseListener(this);
 	}
 	
-	protected static int[][] calculateProduct(int[][] matrixL, int[][] matrixR) {
+	protected void setMatrixL()
+	{
+		for(int i = 0; i < matrixL.length; i++)
+		{
+			for(int j = 0; j < matrixL[0].length; j++)
+			{
+				matrixL[i][j] = "0";
+			}
+		}
+	}
+	
+	protected void setMatrixR()
+	{
+		for(int i = 0; i < matrixR.length; i++)
+		{
+			for(int j = 0; j < matrixR[0].length; j++)
+			{
+				matrixR[i][j] = "0";
+			}
+		}
+	}
+	
+	protected static int[][] calculateProduct(String[][] matrixL, String[][] matrixR) {
 		// TODO Auto-generated method stub
 		int result[][] = new int[matrixL.length][matrixR[0].length];
 		if(matrixL[0].length != matrixR.length)
@@ -125,7 +149,7 @@ public class MultiplicationPanel extends JPanel implements MouseListener{
 		{
 			for(int j = 0; j < matrixR[0].length; j++) {
 				for(int k = 0; k < matrixR.length; k++) {
-					result[i][j] += matrixL[i][k] * matrixR[k][j];
+					result[i][j] += Integer.parseInt(matrixL[i][k]) * Integer.parseInt(matrixR[k][j]);
 				}
 				
 			}
@@ -181,7 +205,7 @@ public class MultiplicationPanel extends JPanel implements MouseListener{
 		{
 			for(int j = 0; j < Integer.parseInt(columnsL.getText()); j++)
 			{
-				g.drawString(Integer.toString(matrixL[i][j]), topLeftL.x + j * squareLength + squareLength / 2, 
+				g.drawString(matrixL[i][j], topLeftL.x + j * squareLength + squareLength / 2, 
 						topLeftL.y + i * squareLength + squareLength / 2);
 			}
 		}
@@ -194,7 +218,7 @@ public class MultiplicationPanel extends JPanel implements MouseListener{
 		{
 			for(int j = 0; j < Integer.parseInt(columnsR.getText()); j++)
 			{
-				g.drawString(Integer.toString(matrixR[i][j]), topLeftR.x + j * squareLength + squareLength / 2, 
+				g.drawString(matrixR[i][j], topLeftR.x + j * squareLength + squareLength / 2, 
 						topLeftR.y + i * squareLength + squareLength / 2);
 			}
 		}
@@ -319,7 +343,7 @@ public class MultiplicationPanel extends JPanel implements MouseListener{
 						highlightedSquareL.x = j;
 						highlightedSquareL.y = i;
 						leftLastClicked = true;
-						matrixL[j][i] = 0;
+						matrixL[j][i] = "0";
 						repaint();
 						return;
 					}
@@ -337,7 +361,7 @@ public class MultiplicationPanel extends JPanel implements MouseListener{
 						highlightedSquareR.x = j;
 						highlightedSquareR.y = i;
 						leftLastClicked = false;
-						matrixR[j][i] = 0;
+						matrixR[j][i] = "0";
 						repaint();
 						return;
 					}
@@ -411,9 +435,53 @@ public class MultiplicationPanel extends JPanel implements MouseListener{
 	public void receiveKey(int key)
 	{
 		if(leftLastClicked)
-			matrixL[highlightedSquareL.y][highlightedSquareL.x] = matrixL[highlightedSquareL.y][highlightedSquareL.x] * 10 + key;
+		{
+			if(matrixL[highlightedSquareL.y][highlightedSquareL.x] == "-")
+			{
+				matrixL[highlightedSquareL.y][highlightedSquareL.x] = "-" + Integer.toString(key);
+			}
+			else
+			{
+				int absolute = Math.abs(Integer.parseInt(matrixL[highlightedSquareL.y][highlightedSquareL.x])) * 10 + key;
+				if(Integer.parseInt(matrixL[highlightedSquareL.y][highlightedSquareL.x]) < 0) 
+					matrixL[highlightedSquareL.y][highlightedSquareL.x] = "-" + Integer.toString(absolute);
+				else 
+					matrixL[highlightedSquareL.y][highlightedSquareL.x] = Integer.toString(absolute);	
+			}
+		}
 		else
-			matrixR[highlightedSquareR.y][highlightedSquareR.x] = matrixR[highlightedSquareR.y][highlightedSquareR.x] * 10 + key;
+		{
+			if(matrixR[highlightedSquareR.y][highlightedSquareR.x] == "-")
+			{
+				matrixR[highlightedSquareR.y][highlightedSquareR.x] = "-" + Integer.toString(key);
+			}
+			else
+			{
+				int absolute = Math.abs(Integer.parseInt(matrixR[highlightedSquareR.y][highlightedSquareR.x])) * 10 + key;
+				if(Integer.parseInt(matrixR[highlightedSquareR.y][highlightedSquareR.x]) < 0) 
+					matrixR[highlightedSquareR.y][highlightedSquareR.x] = "-" + Integer.toString(absolute);
+				else 
+					matrixR[highlightedSquareR.y][highlightedSquareR.x] = Integer.toString(absolute);	
+			}
+		}
+	}
+
+	public void receiveKeyChar(char key)
+	{
+		if(leftLastClicked)
+		{
+			if(key == '-' && Integer.parseInt(matrixL[highlightedSquareL.y][highlightedSquareL.x]) == 0)
+			{
+				matrixL[highlightedSquareL.y][highlightedSquareL.x] = "-";
+			}
+		}
+		else
+		{
+			if(key == '-' && Integer.parseInt(matrixR[highlightedSquareR.y][highlightedSquareR.x]) == 0)
+			{
+				matrixR[highlightedSquareR.y][highlightedSquareR.x] = "-";
+			}
+		}
 	}
 
 

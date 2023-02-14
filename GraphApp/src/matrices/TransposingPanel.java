@@ -30,7 +30,8 @@ public class TransposingPanel extends JPanel implements MouseListener{
 	TransposingKeyHandler keyHandler = null;
 	JButton calculateTransposed;
 	int length;
-	int[][] matrix, transposed;
+	String[][] matrix;
+	int[][] transposed;
 	double offset = 6.5;
 	boolean transPressed;
 	boolean started = false;
@@ -62,9 +63,9 @@ public class TransposingPanel extends JPanel implements MouseListener{
             public void actionPerformed(ActionEvent e) {
             	if(!rows.getText().equals("") && !columns.getText().equals(""))
             	{
-            		matrix = new int[Integer.parseInt(rows.getText())][Integer.parseInt(columns.getText())];
+            		matrix = new String[Integer.parseInt(rows.getText())][Integer.parseInt(columns.getText())];
             		transposed = new int[Integer.parseInt(columns.getText())][Integer.parseInt(rows.getText())];
-            		
+            		setMatrix();
             		repaint();
             	}
             }
@@ -96,13 +97,24 @@ public class TransposingPanel extends JPanel implements MouseListener{
 		addMouseListener(this);
 	}
 	
-	protected static int[][] calculateTrans(int[][] matrix) {
+	protected void setMatrix()
+	{
+		for(int i = 0; i < matrix.length; i++)
+		{
+			for(int j = 0; j < matrix[0].length; j++)
+			{
+				matrix[i][j] = "0";
+			}
+		}
+	}
+	
+	protected static int[][] calculateTrans(String[][] matrix) {
 		// TODO Auto-generated method stub
 		int transposed[][] = new int[matrix[0].length][matrix.length];
 		for(int i = 0; i < matrix[0].length; i++)
 		{
 			for(int j = 0; j < matrix.length; j++) {
-				transposed[i][j] = matrix[j][i];
+				transposed[i][j] = Integer.parseInt(matrix[j][i]);
 			}
 		}
 		return transposed;
@@ -179,7 +191,7 @@ public class TransposingPanel extends JPanel implements MouseListener{
 		{
 			for(int j = 0; j < Integer.parseInt(columns.getText()); j++)
 			{
-				g.drawString(Integer.toString(matrix[i][j]), topLeftL.x + j * squareLength + squareLength / 2, 
+				g.drawString(matrix[i][j], topLeftL.x + j * squareLength + squareLength / 2, 
 						topLeftL.y + i * squareLength + squareLength / 2);
 			}
 		}
@@ -235,7 +247,7 @@ public class TransposingPanel extends JPanel implements MouseListener{
 					{
 						highlightedSquare.x = j;
 						highlightedSquare.y = i;
-						matrix[i][j] = 0;
+						matrix[i][j] = "0";
 						repaint();
 						return;
 					}
@@ -285,7 +297,26 @@ public class TransposingPanel extends JPanel implements MouseListener{
 	
 	public void receiveKey(int key)
 	{
-		matrix[highlightedSquare.y][highlightedSquare.x] = matrix[highlightedSquare.y][highlightedSquare.x] * 10 + key;
+		if(matrix[highlightedSquare.y][highlightedSquare.x] == "-")
+		{
+			matrix[highlightedSquare.y][highlightedSquare.x] = "-" + Integer.toString(key);
+		}
+		else
+		{
+			int absolute = Math.abs(Integer.parseInt(matrix[highlightedSquare.y][highlightedSquare.x])) * 10 + key;
+			if(Integer.parseInt(matrix[highlightedSquare.y][highlightedSquare.x]) < 0) 
+				matrix[highlightedSquare.y][highlightedSquare.x] = "-" + Integer.toString(absolute);
+			else 
+				matrix[highlightedSquare.y][highlightedSquare.x] = Integer.toString(absolute);	
+		}
+	}
+
+	public void receiveKeyChar(char key)
+	{
+		if(key == '-' && Integer.parseInt(matrix[highlightedSquare.y][highlightedSquare.x]) == 0)
+		{
+			matrix[highlightedSquare.y][highlightedSquare.x] = "-";
+		}
 	}
 
 

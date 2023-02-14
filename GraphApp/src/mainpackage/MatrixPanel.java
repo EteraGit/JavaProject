@@ -69,6 +69,8 @@ public class MatrixPanel extends JPanel{
 					Panels.startPanel.add(Panels.multiplicationPanel, BorderLayout.CENTER);
 					Panels.multiplicationPanel.setFocusable(true);
 					Panels.multiplicationPanel.requestFocusInWindow();
+					Panels.startPanel.revalidate();
+					Panels.startPanel.repaint();
 			  }
 		});
 		JButton subtractionButton = new JButton("Subtraction");

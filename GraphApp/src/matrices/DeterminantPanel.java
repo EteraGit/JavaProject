@@ -32,7 +32,7 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 	JButton calculateDeterminant;
 	JLabel result;
 	int length;
-	int[][] matrix;
+	String[][] matrix;
 	double offset = 3.3;
 	
 	public DeterminantPanel()
@@ -61,8 +61,8 @@ public class DeterminantPanel extends JPanel implements MouseListener{
             public void actionPerformed(ActionEvent e) {
             	if(!rows.getText().equals(""))
             	{
-            		matrix = new int[Integer.parseInt(rows.getText())][Integer.parseInt(rows.getText())];
-            		
+            		matrix = new String[Integer.parseInt(rows.getText())][Integer.parseInt(rows.getText())];
+            		setMatrix();
             		repaint();
             	}
             }
@@ -91,22 +91,33 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 		addMouseListener(this);
 	}
 	
-	protected static int calculateDetermiant(int[][] matrix) {
+	protected void setMatrix()
+	{
+		for(int i = 0; i < matrix.length; i++)
+		{
+			for(int j = 0; j < matrix[0].length; j++)
+			{
+				matrix[i][j] = "0";
+			}
+		}
+	}
+	
+	protected static int calculateDetermiant(String[][] matrix) {
 		// TODO Auto-generated method stub
 	    int det = 0;
 	    if (matrix.length == 2) {
-	        return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+	        return Integer.parseInt(matrix[0][0]) * Integer.parseInt(matrix[1][1]) - Integer.parseInt(matrix[0][1]) * Integer.parseInt(matrix[1][0]);
 	    }
 	    for (int i = 0; i < matrix.length; i++) {
-	        int[][] subMatrix = createSubMatrix(matrix, i);
+	        String[][] subMatrix = createSubMatrix(matrix, i);
 	        int subDet = calculateDetermiant(subMatrix);
-	        det += (i % 2 == 0 ? 1 : -1) * matrix[0][i] * subDet;
+	        det += (i % 2 == 0 ? 1 : -1) * Integer.parseInt(matrix[0][i]) * subDet;
 	    }
 	    return det;
 	}
 	
-	protected static int[][] createSubMatrix(int[][] matrix, int excludedCol) {
-	    int[][] subMatrix = new int[matrix.length - 1][matrix.length - 1];
+	protected static String[][] createSubMatrix(String[][] matrix, int excludedCol) {
+	    String[][] subMatrix = new String[matrix.length - 1][matrix.length - 1];
 	    int row = 0;
 	    for (int i = 1; i < matrix.length; i++) {
 	        int col = 0;
@@ -148,7 +159,7 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 		{
 			for(int j = 0; j < Integer.parseInt(rows.getText()); j++)
 			{
-				g.drawString(Integer.toString(matrix[i][j]), topLeft.x + i * squareLength + squareLength / 2, 
+				g.drawString(matrix[i][j], topLeft.x + i * squareLength + squareLength / 2, 
 															 topLeft.y + j * squareLength + squareLength / 2);
 			}
 		}
@@ -201,7 +212,7 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 					{
 						highlightedSquare.x = j;
 						highlightedSquare.y = i;
-						matrix[i][j] = 0;
+						matrix[i][j] = "0";
 						repaint();
 						return;
 					}
@@ -251,6 +262,25 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 	
 	public void receiveKey(int key)
 	{
-		matrix[highlightedSquare.x][highlightedSquare.y] = matrix[highlightedSquare.x][highlightedSquare.y] * 10 + key;
+		if(matrix[highlightedSquare.y][highlightedSquare.x] == "-")
+		{
+			matrix[highlightedSquare.y][highlightedSquare.x] = "-" + Integer.toString(key);
+		}
+		else
+		{
+			int absolute = Math.abs(Integer.parseInt(matrix[highlightedSquare.y][highlightedSquare.x])) * 10 + key;
+			if(Integer.parseInt(matrix[highlightedSquare.y][highlightedSquare.x]) < 0) 
+				matrix[highlightedSquare.y][highlightedSquare.x] = "-" + Integer.toString(absolute);
+			else 
+				matrix[highlightedSquare.y][highlightedSquare.x] = Integer.toString(absolute);	
+		}
+	}
+
+	public void receiveKeyChar(char key)
+	{
+		if(key == '-' && Integer.parseInt(matrix[highlightedSquare.y][highlightedSquare.x]) == 0)
+		{
+			matrix[highlightedSquare.y][highlightedSquare.x] = "-";
+		}
 	}
 }
