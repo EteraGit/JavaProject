@@ -10,7 +10,9 @@ import java.awt.event.ComponentEvent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import matrices.AdditionPanel;
 import matrices.DeterminantPanel;
+import matrices.TransposingPanel;
 
 import javax.swing.JButton;
 
@@ -61,6 +63,8 @@ public class MainFrame implements Runnable{
 		Panels.functionsPanel = new FunctionPanel();	
 		Panels.matrixPanel = new MatrixPanel();
 		Panels.determinantPanel = new DeterminantPanel();
+		Panels.transposingPanel = new TransposingPanel();
+		Panels.additionPanel = new AdditionPanel();
 		
 		funkcijeButton = new JButton("Funkcije");
 		matriceButton = new JButton("Matrice");

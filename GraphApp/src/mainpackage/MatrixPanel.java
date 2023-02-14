@@ -37,6 +37,32 @@ public class MatrixPanel extends JPanel{
 			  } 
 		});
 		
+		JButton transposingButton = new JButton("Transposing");
+		transposingButton.addActionListener(new ActionListener() {
+			  public void actionPerformed(ActionEvent e) { 
+					Panels.startPanel.remove(Panels.matrixPanel);
+					Panels.startPanel.add(Panels.transposingPanel, BorderLayout.CENTER);
+					Panels.transposingPanel.setFocusable(true);
+					Panels.transposingPanel.requestFocusInWindow();
+					Panels.startPanel.revalidate();
+					Panels.startPanel.repaint();
+			  } 
+		});
+		
+		JButton additionButton = new JButton("Addition");
+		additionButton.addActionListener(new ActionListener() {
+			  public void actionPerformed(ActionEvent e) { 
+					Panels.startPanel.remove(Panels.matrixPanel);
+					Panels.startPanel.add(Panels.additionPanel, BorderLayout.CENTER);
+					Panels.additionPanel.setFocusable(true);
+					Panels.additionPanel.requestFocusInWindow();
+					Panels.startPanel.revalidate();
+					Panels.startPanel.repaint();
+			  } 
+		});
+		
+		this.add(additionButton);
+		this.add(transposingButton);
 		this.add(determinantButton);
 		this.add(homeButton);
 	}		

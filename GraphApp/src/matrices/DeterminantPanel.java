@@ -62,8 +62,7 @@ public class DeterminantPanel extends JPanel implements MouseListener{
             	if(!rows.getText().equals(""))
             	{
             		matrix = new int[Integer.parseInt(rows.getText())][Integer.parseInt(rows.getText())];
-            		keyHandler = new DeterminantKeyHandler(Integer.parseInt(rows.getText()));
-            		Panels.determinantPanel.addKeyListener(keyHandler);
+            		
             		repaint();
             	}
             }
@@ -78,6 +77,9 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 			} );
 		
 		result = new JLabel();
+		
+		keyHandler = new DeterminantKeyHandler();
+		addKeyListener(keyHandler);
 		
 		toolBar.add(matrixButton);
 		toolBar.add(rows);
@@ -192,13 +194,13 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 			{
 				for(int j = 0; j < Integer.parseInt(rows.getText()); j++)
 				{
-					if(e.getX() >= topLeft.x + i * squareLength
-					&& e.getX() < topLeft.x + (i+1) * squareLength
-					&& e.getY() >= topLeft.y + j * squareLength
-					&& e.getY() < topLeft.y + (j+1) * squareLength)
+					if(e.getX() >= topLeft.x + j * squareLength
+					&& e.getX() < topLeft.x + (j+1) * squareLength
+					&& e.getY() >= topLeft.y + i * squareLength
+					&& e.getY() < topLeft.y + (i+1) * squareLength)
 					{
-						highlightedSquare.x = i;
-						highlightedSquare.y = j;
+						highlightedSquare.x = j;
+						highlightedSquare.y = i;
 						matrix[i][j] = 0;
 						repaint();
 						return;
@@ -214,13 +216,13 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 			{
 				for(int j = 0; j < Integer.parseInt(rows.getText()); j++)
 				{
-					if(e.getX() >= topLeft.x + i * squareLength
-					&& e.getX() < topLeft.x + (i+1) * squareLength
-					&& e.getY() >= topLeft.y + j * squareLength
-					&& e.getY() < topLeft.y + (j+1) * squareLength)
+					if(e.getX() >= topLeft.x + j * squareLength
+					&& e.getX() < topLeft.x + (j+1) * squareLength
+					&& e.getY() >= topLeft.y + i * squareLength
+					&& e.getY() < topLeft.y + (i+1) * squareLength)
 					{
-						highlightedSquare.x = i;
-						highlightedSquare.y = j;
+						highlightedSquare.x = j;
+						highlightedSquare.y = i;
 						repaint();
 						return;
 					}

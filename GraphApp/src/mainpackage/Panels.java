@@ -2,7 +2,9 @@ package mainpackage;
 
 import javax.swing.JPanel;
 
+import matrices.AdditionPanel;
 import matrices.DeterminantPanel;
+import matrices.TransposingPanel;
 
 public class Panels {
 	
@@ -11,6 +13,8 @@ public class Panels {
 	public static FunctionPanel functionsPanel;
 	public static MatrixPanel matrixPanel;
 	public static DeterminantPanel determinantPanel;
+	public static TransposingPanel transposingPanel;
+	public static AdditionPanel additionPanel;
 
 	public static int WIDTH;
 	public static int HEIGHT;

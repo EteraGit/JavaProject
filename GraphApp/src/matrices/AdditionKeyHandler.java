@@ -5,8 +5,7 @@ import java.awt.event.KeyEvent;
 
 import mainpackage.Panels;
 
-
-public class DeterminantKeyHandler extends KeyAdapter{
+public class AdditionKeyHandler extends KeyAdapter{
 	
 	public int key;
 	
@@ -14,9 +13,9 @@ public class DeterminantKeyHandler extends KeyAdapter{
 	public void keyPressed(KeyEvent event)
 	{
 		if(Character.getNumericValue(event.getKeyChar()) < 10) key = Character.getNumericValue(event.getKeyChar());
-		Panels.determinantPanel.receiveKey(key);
-		Panels.determinantPanel.revalidate();
-		Panels.determinantPanel.repaint();
+		Panels.additionPanel.receiveKey(key);
+		Panels.additionPanel.revalidate();
+		Panels.additionPanel.repaint();
 	}
 	
 	@Override
@@ -30,4 +29,5 @@ public class DeterminantKeyHandler extends KeyAdapter{
 	{
 
 	}
+
 }
