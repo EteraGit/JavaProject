@@ -12,8 +12,16 @@ public class AdditionKeyHandler extends KeyAdapter{
 	@Override
 	public void keyPressed(KeyEvent event)
 	{
-		if(Character.getNumericValue(event.getKeyChar()) < 10) key = Character.getNumericValue(event.getKeyChar());
-		Panels.additionPanel.receiveKey(key);
+		if(Character.getNumericValue(event.getKeyChar()) >= 0 && Character.getNumericValue(event.getKeyChar()) < 10) 
+		{
+			key = Character.getNumericValue(event.getKeyChar());
+			Panels.additionPanel.receiveKey(key);
+		}
+		else if(event.getKeyChar() == '-')
+		{
+			Panels.additionPanel.receiveKeyChar('-');
+		}
+
 		Panels.additionPanel.revalidate();
 		Panels.additionPanel.repaint();
 	}
