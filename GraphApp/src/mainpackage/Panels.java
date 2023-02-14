@@ -4,6 +4,7 @@ import javax.swing.JPanel;
 
 import matrices.AdditionPanel;
 import matrices.DeterminantPanel;
+import matrices.ExponentiationPanel;
 import matrices.InversePanel;
 import matrices.SubtractionPanel;
 import matrices.TransposingPanel;
@@ -21,6 +22,7 @@ public class Panels {
 	public static MultiplicationPanel multiplicationPanel;
 	public static SubtractionPanel subtractionPanel;
 	public static InversePanel inversePanel;
+	public static ExponentiationPanel exponentiationPanel;
 
 	public static int WIDTH;
 	public static int HEIGHT;
