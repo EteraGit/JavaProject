@@ -61,6 +61,19 @@ public class MatrixPanel extends JPanel{
 			  } 
 		});
 		
+		JButton multiplicationButton = new JButton("Multiplication");
+		multiplicationButton.addActionListener(new ActionListener() {
+			  public void actionPerformed(ActionEvent e) { 
+					Panels.startPanel.remove(Panels.matrixPanel);
+					Panels.startPanel.add(Panels.multiplicationPanel, BorderLayout.CENTER);
+					Panels.multiplicationPanel.setFocusable(true);
+					Panels.multiplicationPanel.requestFocusInWindow();
+					Panels.startPanel.revalidate();
+					Panels.startPanel.repaint();
+			  } 
+		});
+		
+		this.add(multiplicationButton);
 		this.add(additionButton);
 		this.add(transposingButton);
 		this.add(determinantButton);
