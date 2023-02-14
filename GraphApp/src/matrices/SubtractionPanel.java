@@ -19,7 +19,7 @@ import mainpackage.JFrameTocka;
 import mainpackage.Panels;
 
 @SuppressWarnings("serial")
-public class AdditionPanel extends JPanel implements MouseListener{
+public class SubtractionPanel extends JPanel implements MouseListener{
 	JToolBar toolBar;
 	JButton matrixButton;
 	JTextField rows;
@@ -30,7 +30,7 @@ public class AdditionPanel extends JPanel implements MouseListener{
 	JFrameTocka topLeftResult = new JFrameTocka(0,0);
 	JFrameTocka highlightedSquareL = new JFrameTocka(0,0);
 	JFrameTocka highlightedSquareR = new JFrameTocka(0,0);
-	AdditionKeyHandler keyHandler = null;
+	SubtractionKeyHandler keyHandler = null;
 	JButton calculateTransposed;
 	int length;
 	int[][] matrixL, matrixR, matrixResult;
@@ -39,7 +39,7 @@ public class AdditionPanel extends JPanel implements MouseListener{
 	boolean started = false;
 	boolean leftLastClicked = true;
 	
-	public AdditionPanel()
+	public SubtractionPanel()
 	{
 		this.setBackground(Color.blue);
 		
@@ -48,7 +48,7 @@ public class AdditionPanel extends JPanel implements MouseListener{
 		matrixButton = new JButton("Matrices");
 		matrixButton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
-					Panels.startPanel.remove(Panels.additionPanel);
+					Panels.startPanel.remove(Panels.subtractionPanel);
 					Panels.startPanel.add(Panels.matrixPanel, BorderLayout.CENTER);
 					Panels.mainPanel.setFocusable(true);
 					Panels.mainPanel.requestFocusInWindow();
@@ -77,19 +77,19 @@ public class AdditionPanel extends JPanel implements MouseListener{
         };
 		drawButton.addActionListener(actionListener);
 		
-		calculateTransposed = new JButton("Calculate Sum");
+		calculateTransposed = new JButton("Calculate Subtraction");
 		calculateTransposed.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 				  resultPressed = true;
-				  matrixResult = calculateSum(matrixL, matrixR);
+				  matrixResult = calculateSubtraction(matrixL, matrixR);
 				  
-          		  Panels.additionPanel.setFocusable(true);
-          		  Panels.additionPanel.requestFocusInWindow();
+          		  Panels.subtractionPanel.setFocusable(true);
+          		  Panels.subtractionPanel.requestFocusInWindow();
           		  repaint();
 			  }
 			} );
 		
-		keyHandler = new AdditionKeyHandler();
+		keyHandler = new SubtractionKeyHandler();
 		addKeyListener(keyHandler);
 		
 		toolBar.add(matrixButton);
@@ -102,13 +102,13 @@ public class AdditionPanel extends JPanel implements MouseListener{
 		addMouseListener(this);
 	}
 	
-	protected static int[][] calculateSum(int[][] matrixL, int[][] matrixR) {
+	protected static int[][] calculateSubtraction(int[][] matrixL, int[][] matrixR) {
 		// TODO Auto-generated method stub
 		int result[][] = new int[matrixL.length][matrixL[0].length];
 		for(int i = 0; i < matrixL.length; i++)
 		{
 			for(int j = 0; j < matrixL[0].length; j++) {
-				result[i][j] = matrixL[i][j] + matrixR[i][j];
+				result[i][j] = matrixL[i][j] - matrixR[i][j];
 			}
 		}
 		return result;

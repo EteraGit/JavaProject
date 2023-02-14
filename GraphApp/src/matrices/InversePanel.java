@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -16,26 +17,26 @@ import javax.swing.JToolBar;
 
 import mainpackage.JFrameTocka;
 import mainpackage.Panels;
+import mainpackage.Error;
 
 @SuppressWarnings("serial")
-public class TransposingPanel extends JPanel implements MouseListener{
+public class InversePanel extends JPanel implements MouseListener{
 	JToolBar toolBar;
 	JButton matrixButton;
 	JTextField rows;
-	JTextField columns;
 	JButton drawButton;
 	JFrameTocka topLeftL = new JFrameTocka(0,0);
 	JFrameTocka topLeftR = new JFrameTocka(0,0);
 	JFrameTocka highlightedSquare = new JFrameTocka(0,0);
-	TransposingKeyHandler keyHandler = null;
-	JButton calculateTransposed;
+	InverseKeyHandler keyHandler = null;
+	JButton calculateInverse;
 	int length;
-	int[][] matrix, transposed;
+	String[][] matrix; double[][] inverse;
 	double offset = 6.5;
-	boolean transPressed;
+	boolean inversePressed;
 	boolean started = false;
 	
-	public TransposingPanel()
+	public InversePanel()
 	{
 		this.setBackground(Color.pink);
 		
@@ -44,7 +45,7 @@ public class TransposingPanel extends JPanel implements MouseListener{
 		matrixButton = new JButton("Matrices");
 		matrixButton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
-					Panels.startPanel.remove(Panels.transposingPanel);
+					Panels.startPanel.remove(Panels.inversePanel);
 					Panels.startPanel.add(Panels.matrixPanel, BorderLayout.CENTER);
 					Panels.mainPanel.setFocusable(true);
 					Panels.mainPanel.requestFocusInWindow();
@@ -53,17 +54,18 @@ public class TransposingPanel extends JPanel implements MouseListener{
 			  } 
 			} );
 		
-		rows = new JTextField(10);	
-		columns = new JTextField(10);
+		rows = new JTextField(10);
 		
 		drawButton = new JButton("Draw Matrix");
 		ActionListener actionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	if(!rows.getText().equals("") && !columns.getText().equals(""))
+            	if(!rows.getText().equals(""))
             	{
-            		matrix = new int[Integer.parseInt(rows.getText())][Integer.parseInt(columns.getText())];
-            		transposed = new int[Integer.parseInt(columns.getText())][Integer.parseInt(rows.getText())];
+            		matrix = new String[Integer.parseInt(rows.getText())][Integer.parseInt(rows.getText())];
+            		inverse = new double[Integer.parseInt(rows.getText())][Integer.parseInt(rows.getText())];
+            		
+            		setMatrix();
             		
             		repaint();
             	}
@@ -71,11 +73,11 @@ public class TransposingPanel extends JPanel implements MouseListener{
         };
 		drawButton.addActionListener(actionListener);
 		
-		calculateTransposed = new JButton("Calculate transposed matrix");
-		calculateTransposed.addActionListener(new ActionListener() { 
+		calculateInverse = new JButton("Calculate Inverse");
+		calculateInverse.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
-				  transPressed = true;
-				  transposed = calculateTrans(matrix);
+				  inverse = calculateInverse(matrix);
+				  if(inverse != null) inversePressed = true;
 				  
           		  Panels.transposingPanel.setFocusable(true);
           		  Panels.transposingPanel.requestFocusInWindow();
@@ -83,29 +85,83 @@ public class TransposingPanel extends JPanel implements MouseListener{
 			  }
 			} );
 		
-		keyHandler = new TransposingKeyHandler();
+		keyHandler = new InverseKeyHandler();
 		addKeyListener(keyHandler);
 		
 		toolBar.add(matrixButton);
 		toolBar.add(rows);
-		toolBar.add(columns);
 		toolBar.add(drawButton);
-		toolBar.add(calculateTransposed);
+		toolBar.add(calculateInverse);
 		
 		this.add(toolBar);
 		addMouseListener(this);
 	}
 	
-	protected static int[][] calculateTrans(int[][] matrix) {
-		// TODO Auto-generated method stub
-		int transposed[][] = new int[matrix[0].length][matrix.length];
-		for(int i = 0; i < matrix[0].length; i++)
+	protected void setMatrix()
+	{
+		for(int i = 0; i < matrix.length; i++)
 		{
-			for(int j = 0; j < matrix.length; j++) {
-				transposed[i][j] = matrix[j][i];
+			for(int j = 0; j < matrix[0].length; j++)
+			{
+				matrix[i][j] = "0";
 			}
 		}
-		return transposed;
+	}
+	
+	protected double[][] calculateInverse(String[][] matrix) {
+		
+        int n = matrix.length;
+        double[][] a = new double[n][n];
+        double[][] b = new double[n][n];
+
+        // Create an identity matrix
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                a[i][j] = Integer.parseInt(matrix[i][j]);
+                b[i][j] = (i == j) ? 1.0 : 0.0;
+            }
+        }
+
+        // Perform row operations on the augmented matrix
+        for (int i = 0; i < n; i++) {
+            int pivot = i;
+            double pivotValue = Math.abs(a[i][i]);
+            for (int j = i + 1; j < n; j++) {
+                double temp = Math.abs(a[j][i]);
+                if (temp > pivotValue) {
+                    pivot = j;
+                    pivotValue = temp;
+                }
+            }
+            if (pivotValue == 0) {
+            	Error.showError("Matrix is not invertible");
+                return null;
+            }
+            if (pivot != i) {
+                double[] temp = a[i];
+                a[i] = a[pivot];
+                a[pivot] = temp;
+                temp = b[i];
+                b[i] = b[pivot];
+                b[pivot] = temp;
+            }
+            double aii = a[i][i];
+            for (int j = 0; j < n; j++) {
+                a[i][j] /= aii;
+                b[i][j] /= aii;
+            }
+            for (int j = 0; j < n; j++) {
+                if (j != i) {
+                    double aij = a[j][i];
+                    for (int k = 0; k < n; k++) {
+                        a[j][k] -= a[i][k] * aij;
+                        b[j][k] -= b[i][k] * aij;
+                    }
+                }
+            }
+        }
+
+        return b;
 	}
 
 
@@ -117,7 +173,7 @@ public class TransposingPanel extends JPanel implements MouseListener{
 		{
 			Graphics2D g = (Graphics2D) g1;
 			
-			int squareLength = Panels.WIDTH / (Integer.parseInt(rows.getText()) + Integer.parseInt(columns.getText()) + 6);
+			int squareLength = Panels.WIDTH / (2 * Integer.parseInt(rows.getText()) + 6);
 			
 			topLeftL.x = 2 * squareLength;	
 			topLeftL.y = 2 * toolBar.getHeight();
@@ -126,7 +182,7 @@ public class TransposingPanel extends JPanel implements MouseListener{
 			drawGrid(g, squareLength);
 			drawNumbers(g, squareLength);
 			
-			if(transPressed)
+			if(inversePressed)
 			{
 				topLeftR.x = Panels.WIDTH - (2 + Integer.parseInt(rows.getText())) * squareLength;
 				topLeftR.y = 2 * toolBar.getHeight();
@@ -142,11 +198,11 @@ public class TransposingPanel extends JPanel implements MouseListener{
 	private void drawNumbersT(Graphics2D g, int squareLength) {
 		// TODO Auto-generated method stub
 
-		for(int i = 0; i < Integer.parseInt(columns.getText()); i++)
+		for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 		{
 			for(int j = 0; j < Integer.parseInt(rows.getText()); j++)
 			{
-				g.drawString(Integer.toString(transposed[i][j]), topLeftR.x + j * squareLength + squareLength / 2, 
+				g.drawString(Double.toString(inverse[i][j]), topLeftR.x + j * squareLength + squareLength / 2, 
 						topLeftR.y + i * squareLength + squareLength / 2);
 			}
 		}
@@ -154,7 +210,7 @@ public class TransposingPanel extends JPanel implements MouseListener{
 
 	private void drawGridT(Graphics2D g, int squareLength) {
 		// TODO Auto-generated method stub
-		int height = squareLength * Integer.parseInt(columns.getText());
+		int height = squareLength * Integer.parseInt(rows.getText());
 		int width = squareLength * Integer.parseInt(rows.getText());
 		
 		g.setColor(new Color(0,0,0));
@@ -166,7 +222,7 @@ public class TransposingPanel extends JPanel implements MouseListener{
 		{
 			g.drawLine(topLeftR.x + i * squareLength, topLeftR.y, topLeftR.x + i * squareLength, topLeftR.y + height);
 		}
-		for(int i = 0; i < Integer.parseInt(columns.getText()); i++)
+		for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 		{
 			g.drawLine(topLeftR.x, topLeftR.y + i * squareLength, topLeftR.x + width, topLeftR.y + i * squareLength);
 		}
@@ -177,9 +233,9 @@ public class TransposingPanel extends JPanel implements MouseListener{
 		// TODO Auto-generated method stub
 		for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 		{
-			for(int j = 0; j < Integer.parseInt(columns.getText()); j++)
+			for(int j = 0; j < Integer.parseInt(rows.getText()); j++)
 			{
-				g.drawString(Integer.toString(matrix[i][j]), topLeftL.x + j * squareLength + squareLength / 2, 
+				g.drawString(matrix[i][j], topLeftL.x + j * squareLength + squareLength / 2, 
 						topLeftL.y + i * squareLength + squareLength / 2);
 			}
 		}
@@ -189,7 +245,7 @@ public class TransposingPanel extends JPanel implements MouseListener{
 		// TODO Auto-generated method stub
 		
 		int height = squareLength * Integer.parseInt(rows.getText());
-		int width = squareLength * Integer.parseInt(columns.getText());
+		int width = squareLength * Integer.parseInt(rows.getText());
 		
 		g.setColor(new Color(0,0,0));
 		g.setStroke(new BasicStroke(2));
@@ -199,7 +255,7 @@ public class TransposingPanel extends JPanel implements MouseListener{
 				topLeftL.y + highlightedSquare.y * squareLength, squareLength, squareLength);
 		g.setColor(new Color(0,0,0));
 		
-		for(int i = 0; i < Integer.parseInt(columns.getText()); i++)
+		for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 		{
 			g.drawLine(topLeftL.x + i * squareLength, topLeftL.y, topLeftL.x + i * squareLength, topLeftL.y + height);
 		}
@@ -222,11 +278,11 @@ public class TransposingPanel extends JPanel implements MouseListener{
 		
 		if (e.getButton() == MouseEvent.BUTTON3) //right click
 		{
-			int squareLength = Panels.WIDTH / (Integer.parseInt(rows.getText()) + Integer.parseInt(columns.getText()) + 6);
+			int squareLength = Panels.WIDTH / (2 * Integer.parseInt(rows.getText()) + 6);
 			
 			for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 			{
-				for(int j = 0; j < Integer.parseInt(columns.getText()); j++)
+				for(int j = 0; j < Integer.parseInt(rows.getText()); j++)
 				{
 					if(e.getX() >= topLeftL.x + j * squareLength
 					&& e.getX() < topLeftL.x + (j+1) * squareLength
@@ -235,7 +291,7 @@ public class TransposingPanel extends JPanel implements MouseListener{
 					{
 						highlightedSquare.x = j;
 						highlightedSquare.y = i;
-						matrix[i][j] = 0;
+						matrix[i][j] = "0";
 						repaint();
 						return;
 					}
@@ -244,11 +300,11 @@ public class TransposingPanel extends JPanel implements MouseListener{
 		}
 		else if(e.getButton() == MouseEvent.BUTTON1) //left click
 		{
-			int squareLength = Panels.WIDTH / (Integer.parseInt(rows.getText()) + Integer.parseInt(columns.getText()) + 6);
+			int squareLength = Panels.WIDTH / (2 * Integer.parseInt(rows.getText()) + 6);
 			
 			for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 			{
-				for(int j = 0; j < Integer.parseInt(columns.getText()); j++)
+				for(int j = 0; j < Integer.parseInt(rows.getText()); j++)
 				{
 					if(e.getX() >= topLeftL.x + j * squareLength
 					&& e.getX() < topLeftL.x + (j+1) * squareLength
@@ -285,8 +341,25 @@ public class TransposingPanel extends JPanel implements MouseListener{
 	
 	public void receiveKey(int key)
 	{
-		matrix[highlightedSquare.y][highlightedSquare.x] = matrix[highlightedSquare.y][highlightedSquare.x] * 10 + key;
+		if(matrix[highlightedSquare.y][highlightedSquare.x] == "-")
+		{
+			matrix[highlightedSquare.y][highlightedSquare.x] = "-" + Integer.toString(key);
+		}
+		else
+		{
+			int absolute = Math.abs(Integer.parseInt(matrix[highlightedSquare.y][highlightedSquare.x])) * 10 + key;
+			if(Integer.parseInt(matrix[highlightedSquare.y][highlightedSquare.x]) < 0) 
+				matrix[highlightedSquare.y][highlightedSquare.x] = "-" + Integer.toString(absolute);
+			else 
+				matrix[highlightedSquare.y][highlightedSquare.x] = Integer.toString(absolute);	
+		}
 	}
 
-
+	public void receiveKeyChar(char key)
+	{
+		if(key == '-' && Integer.parseInt(matrix[highlightedSquare.y][highlightedSquare.x]) == 0)
+		{
+			matrix[highlightedSquare.y][highlightedSquare.x] = "-";
+		}
+	}
 }
