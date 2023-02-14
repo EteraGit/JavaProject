@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 
 import matrices.AdditionPanel;
 import matrices.DeterminantPanel;
+import matrices.ExponentiationPanel;
 import matrices.InversePanel;
 import matrices.SubtractionPanel;
 import matrices.TransposingPanel;
@@ -69,6 +70,7 @@ public class MainFrame implements Runnable{
 		Panels.additionPanel = new AdditionPanel();
 		Panels.subtractionPanel = new SubtractionPanel();
 		Panels.inversePanel = new InversePanel();
+		Panels.exponentiationPanel = new ExponentiationPanel();
 		
 		funkcijeButton = new JButton("Funkcije");
 		matriceButton = new JButton("Matrice");
