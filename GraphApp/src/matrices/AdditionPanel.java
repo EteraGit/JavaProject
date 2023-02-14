@@ -297,10 +297,10 @@ public class AdditionPanel extends JPanel implements MouseListener{
 					&& e.getY() >= topLeftL.y + i * squareLength
 					&& e.getY() < topLeftL.y + (i+1) * squareLength)
 					{
-						highlightedSquareL.x = i;
-						highlightedSquareL.y = j;
+						highlightedSquareL.x = j;
+						highlightedSquareL.y = i;
 						leftLastClicked = true;
-						matrixL[i][j] = 0;
+						matrixL[j][i] = 0;
 						repaint();
 						return;
 					}
@@ -315,10 +315,10 @@ public class AdditionPanel extends JPanel implements MouseListener{
 					&& e.getY() >= topLeftR.y + i * squareLength
 					&& e.getY() < topLeftR.y + (i+1) * squareLength)
 					{
-						highlightedSquareR.x = i;
-						highlightedSquareR.y = j;
+						highlightedSquareR.x = j;
+						highlightedSquareR.y = i;
 						leftLastClicked = false;
-						matrixR[i][j] = 0;
+						matrixR[j][i] = 0;
 						repaint();
 						return;
 					}
@@ -343,8 +343,8 @@ public class AdditionPanel extends JPanel implements MouseListener{
 					&& e.getY() >= topLeftL.y + i * squareLength 
 					&& e.getY() < topLeftL.y + (i+1) * squareLength)
 					{
-						highlightedSquareL.x = i;
-						highlightedSquareL.y = j;
+						highlightedSquareL.x = j;
+						highlightedSquareL.y = i;
 						leftLastClicked = true;
 						repaint();
 						return;
@@ -360,8 +360,8 @@ public class AdditionPanel extends JPanel implements MouseListener{
 					&& e.getY() >= topLeftR.y + i * squareLength 
 					&& e.getY() < topLeftR.y + (i+1) * squareLength)
 					{
-						highlightedSquareR.x = i;
-						highlightedSquareR.y = j;
+						highlightedSquareR.x = j;
+						highlightedSquareR.y = i;
 						leftLastClicked = false;
 						repaint();
 						return;
@@ -392,9 +392,9 @@ public class AdditionPanel extends JPanel implements MouseListener{
 	public void receiveKey(int key)
 	{
 		if(leftLastClicked)
-			matrixL[highlightedSquareL.x][highlightedSquareL.y] = matrixL[highlightedSquareL.x][highlightedSquareL.y] * 10 + key;
+			matrixL[highlightedSquareL.y][highlightedSquareL.x] = matrixL[highlightedSquareL.y][highlightedSquareL.x] * 10 + key;
 		else
-			matrixR[highlightedSquareR.x][highlightedSquareR.y] = matrixR[highlightedSquareR.x][highlightedSquareR.y] * 10 + key;
+			matrixR[highlightedSquareR.y][highlightedSquareR.x] = matrixR[highlightedSquareR.y][highlightedSquareR.x] * 10 + key;
 	}
 
 
