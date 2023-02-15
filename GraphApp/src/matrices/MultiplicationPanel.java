@@ -14,11 +14,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.JToolBar;
 
 import design.StylizedButton;
 import design.StylizedLabel;
@@ -194,6 +191,8 @@ public class MultiplicationPanel extends JPanel implements MouseListener{
 		if(!rowsL.getText().equals("") && !columnsL.getText().equals("") && !rowsR.getText().equals("") && !columnsR.getText().equals(""))
 		{
 			Graphics2D g = (Graphics2D) g1;
+			
+			g.clearRect(0, 0, Panels.WIDTH, Panels.HEIGHT);
 			
 			int squareLength;
 			

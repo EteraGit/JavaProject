@@ -14,11 +14,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.JToolBar;
 
 import design.StylizedButton;
 import design.StylizedLabel;
@@ -90,7 +87,7 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 			} );
 		
 		resultLabel = new StylizedLabel("Result:", 13);
-		rowsLabel = new StylizedLabel("Rows", 13);
+		rowsLabel = new StylizedLabel("Rows:", 13);
 		
 		matrixButton.setPreferredSize(new Dimension(70,20));
 		drawButton.setPreferredSize(new Dimension(95, 20));
@@ -104,7 +101,7 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 		toolBar.add(matrixButton);
 		toolBar.add(Box.createHorizontalStrut(22));
 		toolBar.add(rowsLabel);
-		toolBar.add(Box.createHorizontalStrut(70));
+		toolBar.add(Box.createHorizontalStrut(10));
 		toolBar.add(rows);
 		toolBar.add(Box.createHorizontalStrut(70));
 		toolBar.add(drawButton);
@@ -132,7 +129,6 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 	}
 	
 	protected static int calculateDetermiant(String[][] matrix) {
-		// TODO Auto-generated method stub
 	    int det = 0;
 	    if (matrix.length == 2) {
 	        return Integer.parseInt(matrix[0][0]) * Integer.parseInt(matrix[1][1]) - Integer.parseInt(matrix[0][1]) * Integer.parseInt(matrix[1][0]);
@@ -170,10 +166,12 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 		{
 			Graphics2D g = (Graphics2D) g1;
 			
-			int squareLength = (Panels.HEIGHT - toolBar.getHeight())/ (Integer.parseInt(rows.getText()) + 2);
+			g.clearRect(0, 0, Panels.WIDTH, Panels.HEIGHT);
+			
+			int squareLength = (Panels.HEIGHT - toolBar.getHeight()) / (Integer.parseInt(rows.getText()) + 2);
 			
 			
-			topLeft.x = 4*squareLength;
+			topLeft.x = (Panels.WIDTH - (Integer.parseInt(rows.getText()) * squareLength)) / 2;
 			topLeft.y = 2 * toolBar.getHeight();
 			
 			g.setFont(new Font("Arial", Font.BOLD, squareLength / 3));
@@ -247,7 +245,7 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 					{
 						highlightedSquare.x = i;
 						highlightedSquare.y = j;
-						matrix[i][j] = "0";
+						matrix[j][i] = "0";
 						repaint();
 						return;
 					}

@@ -14,10 +14,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.Box;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.JToolBar;
 
 import design.StylizedButton;
 import design.StylizedLabel;
@@ -158,7 +156,15 @@ public class TransposingPanel extends JPanel implements MouseListener{
 		{
 			Graphics2D g = (Graphics2D) g1;
 			
+			g.clearRect(0, 0, Panels.WIDTH, Panels.HEIGHT);
+			
 			int squareLength = Panels.WIDTH / (Integer.parseInt(rows.getText()) + Integer.parseInt(columns.getText()) + 6);
+			
+			if((Integer.parseInt(rows.getText()) + 2) * squareLength > Panels.HEIGHT - toolBar.getHeight())
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / (Integer.parseInt(rows.getText()) + 2);
+			
+			if((Integer.parseInt(columns.getText()) + 2) * squareLength > Panels.HEIGHT - toolBar.getHeight())
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / (Integer.parseInt(columns.getText()) + 2);
 			
 			topLeftL.x = 2 * squareLength;	
 			topLeftL.y = 2 * toolBar.getHeight();
@@ -272,6 +278,12 @@ public class TransposingPanel extends JPanel implements MouseListener{
 		{
 			int squareLength = Panels.WIDTH / (Integer.parseInt(rows.getText()) + Integer.parseInt(columns.getText()) + 6);
 			
+			if((Integer.parseInt(rows.getText()) + 2) * squareLength > Panels.HEIGHT - toolBar.getHeight())
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / (Integer.parseInt(rows.getText()) + 2);
+			
+			if((Integer.parseInt(columns.getText()) + 2) * squareLength > Panels.HEIGHT - toolBar.getHeight())
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / (Integer.parseInt(columns.getText()) + 2);
+			
 			for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 			{
 				for(int j = 0; j < Integer.parseInt(columns.getText()); j++)
@@ -293,6 +305,12 @@ public class TransposingPanel extends JPanel implements MouseListener{
 		else if(e.getButton() == MouseEvent.BUTTON1) //left click
 		{
 			int squareLength = Panels.WIDTH / (Integer.parseInt(rows.getText()) + Integer.parseInt(columns.getText()) + 6);
+			
+			if((Integer.parseInt(rows.getText()) + 2) * squareLength > Panels.HEIGHT - toolBar.getHeight())
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / (Integer.parseInt(rows.getText()) + 2);
+			
+			if((Integer.parseInt(columns.getText()) + 2) * squareLength > Panels.HEIGHT - toolBar.getHeight())
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / (Integer.parseInt(columns.getText()) + 2);
 			
 			for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 			{

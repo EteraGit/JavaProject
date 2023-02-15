@@ -8,17 +8,16 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Random;
+
 import javax.swing.Box;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
-import javax.swing.UIManager;
 
 import design.StylizedButton;
 import design.StylizedLabel;
@@ -40,6 +39,7 @@ public class AdditionPanel extends JPanel implements MouseListener{
 	JFrameTocka highlightedSquareR = new JFrameTocka(0,0);
 	AdditionKeyHandler keyHandler = null;
 	StylizedButton calculateSum;
+	StylizedButton randomButton;
 	int length;
 	String[][] matrixL, matrixR; int[][] matrixResult;
 	double offset = 6.5;
@@ -66,6 +66,20 @@ public class AdditionPanel extends JPanel implements MouseListener{
 					Panels.mainPanel.requestFocusInWindow();
 					Panels.startPanel.revalidate();
 					Panels.startPanel.repaint();
+			  } 
+			} );
+		
+		randomButton = new StylizedButton("Random",10, buttonColor, 1);
+		randomButton.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				  if(!rows.getText().equals("") && !columns.getText().equals("")) 
+				  {
+	            	  matrixL = new String[Integer.parseInt(rows.getText())][Integer.parseInt(columns.getText())];
+	            	  matrixR = new String[Integer.parseInt(rows.getText())][Integer.parseInt(columns.getText())];
+	            	  matrixResult = new int[Integer.parseInt(rows.getText())][Integer.parseInt(columns.getText())];
+					  addRandomNumbers();
+					  repaint();
+				  }
 			  } 
 			} );
 		
@@ -128,10 +142,32 @@ public class AdditionPanel extends JPanel implements MouseListener{
 		toolBar.add(Box.createHorizontalStrut(15));
 		toolBar.add(drawButton);
 		toolBar.add(Box.createHorizontalStrut(15));
+		toolBar.add(randomButton);
+		toolBar.add(Box.createHorizontalStrut(15));
 		toolBar.add(calculateSum);
 		
 		this.add(toolBar, BorderLayout.PAGE_START);
 		addMouseListener(this);
+	}
+
+	protected void addRandomNumbers()
+	{
+		System.out.println("hi");
+		for(int i = 0; i < matrixL.length; i++)
+		{
+			for(int j = 0; j < matrixL[0].length; j++)
+			{
+				matrixL[i][j] = Integer.toString(new Random().nextInt(21) - 10);
+			}
+		}
+		
+		for(int i = 0; i < matrixR.length; i++)
+		{
+			for(int j = 0; j < matrixR[0].length; j++)
+			{
+				matrixR[i][j] = Integer.toString(new Random().nextInt(21) - 10);
+			}
+		}
 	}
 	
 	protected void setMatrixL()
@@ -177,12 +213,17 @@ public class AdditionPanel extends JPanel implements MouseListener{
 		{
 			Graphics2D g = (Graphics2D) g1;
 			
+			g.clearRect(0, 0, Panels.WIDTH, Panels.HEIGHT);
+			
 			int squareLength;
 			
-			if(Integer.parseInt(rows.getText()) > 3 * Integer.parseInt(columns.getText()) + 8)
-				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / Integer.parseInt(rows.getText());
-			else
+			if(Integer.parseInt(rows.getText()) <= 3 * Integer.parseInt(columns.getText()) + 8)
 				squareLength = Panels.WIDTH / (3 * Integer.parseInt(columns.getText()) + 8);
+			else
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / Integer.parseInt(rows.getText());
+			
+			if((Integer.parseInt(rows.getText()) + 2) * squareLength > Panels.HEIGHT - toolBar.getHeight())
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / (Integer.parseInt(rows.getText()) + 2);
 			
 			topLeftL.x = 2 * squareLength;	
 			topLeftL.y = 2 * toolBar.getHeight();
@@ -349,10 +390,13 @@ public class AdditionPanel extends JPanel implements MouseListener{
 		{
 			int squareLength;
 			
-			if(Integer.parseInt(rows.getText()) > 3 * Integer.parseInt(columns.getText()) + 8)
-				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / Integer.parseInt(rows.getText());
-			else
+			if(Integer.parseInt(rows.getText()) <= 3 * Integer.parseInt(columns.getText()) + 8)
 				squareLength = Panels.WIDTH / (3 * Integer.parseInt(columns.getText()) + 8);
+			else
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / Integer.parseInt(rows.getText());
+			
+			if((Integer.parseInt(rows.getText()) + 2) * squareLength > Panels.HEIGHT - toolBar.getHeight())
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / (Integer.parseInt(rows.getText()) + 2);
 			
 			for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 			{
@@ -395,10 +439,13 @@ public class AdditionPanel extends JPanel implements MouseListener{
 		{
 			int squareLength;
 			
-			if(Integer.parseInt(rows.getText()) > 3 * Integer.parseInt(columns.getText()) + 8)
-				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / Integer.parseInt(rows.getText());
-			else
+			if(Integer.parseInt(rows.getText()) <= 3 * Integer.parseInt(columns.getText()) + 8)
 				squareLength = Panels.WIDTH / (3 * Integer.parseInt(columns.getText()) + 8);
+			else
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / Integer.parseInt(rows.getText());
+			
+			if((Integer.parseInt(rows.getText()) + 2) * squareLength > Panels.HEIGHT - toolBar.getHeight())
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / (Integer.parseInt(rows.getText()) + 2);
 			
 			for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 			{

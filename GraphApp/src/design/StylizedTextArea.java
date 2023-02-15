@@ -2,12 +2,10 @@ package design;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-
-import mainpackage.Panels;
 
 import java.awt.*;
 
+@SuppressWarnings("serial")
 public class StylizedTextArea extends JTextArea {
 
     private static final Color BACKGROUND_COLOR = new Color(255, 255, 255); // set background color

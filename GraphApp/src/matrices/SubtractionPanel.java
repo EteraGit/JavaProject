@@ -14,10 +14,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.Box;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.JToolBar;
 
 import design.StylizedButton;
 import design.StylizedLabel;
@@ -88,7 +86,7 @@ public class SubtractionPanel extends JPanel implements MouseListener{
         };
 		drawButton.addActionListener(actionListener);
 		
-		calculateSubtraction =new StylizedButton("Calculate Subtraction",13, buttonColor, 1 );
+		calculateSubtraction = new StylizedButton("Calculate Subtraction", 13, buttonColor, 1);
 		calculateSubtraction.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 				  resultPressed = true;
@@ -174,13 +172,20 @@ public class SubtractionPanel extends JPanel implements MouseListener{
 		{
 			Graphics2D g = (Graphics2D) g1;
 			
+			g.clearRect(0, 0, Panels.WIDTH, Panels.HEIGHT);
+			
 			int squareLength;
 			
-			if(Integer.parseInt(rows.getText()) > 3 * Integer.parseInt(columns.getText()) + 8)
-				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / Integer.parseInt(rows.getText());
-			else
+			if(Integer.parseInt(rows.getText()) <= 3 * Integer.parseInt(columns.getText()) + 8)
 				squareLength = Panels.WIDTH / (3 * Integer.parseInt(columns.getText()) + 8);
+			else
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / Integer.parseInt(rows.getText());
+			
+			if((Integer.parseInt(rows.getText()) + 2) * squareLength > Panels.HEIGHT - toolBar.getHeight())
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / (Integer.parseInt(rows.getText()) + 2);
+			
 			g.setFont(new Font("Arial", Font.BOLD, squareLength/2));
+			
 			topLeftL.x = 2 * squareLength;	
 			topLeftL.y = 2 * toolBar.getHeight();
 				
@@ -346,10 +351,13 @@ public class SubtractionPanel extends JPanel implements MouseListener{
 		{
 			int squareLength;
 			
-			if(Integer.parseInt(rows.getText()) > 3 * Integer.parseInt(columns.getText()) + 8)
-				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / Integer.parseInt(rows.getText());
-			else
+			if(Integer.parseInt(rows.getText()) <= 3 * Integer.parseInt(columns.getText()) + 8)
 				squareLength = Panels.WIDTH / (3 * Integer.parseInt(columns.getText()) + 8);
+			else
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / Integer.parseInt(rows.getText());
+			
+			if((Integer.parseInt(rows.getText()) + 2) * squareLength > Panels.HEIGHT - toolBar.getHeight())
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / (Integer.parseInt(rows.getText()) + 2);
 			
 			for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 			{
@@ -392,10 +400,13 @@ public class SubtractionPanel extends JPanel implements MouseListener{
 		{
 			int squareLength;
 			
-			if(Integer.parseInt(rows.getText()) > 3 * Integer.parseInt(columns.getText()) + 8)
-				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / Integer.parseInt(rows.getText());
-			else
+			if(Integer.parseInt(rows.getText()) <= 3 * Integer.parseInt(columns.getText()) + 8)
 				squareLength = Panels.WIDTH / (3 * Integer.parseInt(columns.getText()) + 8);
+			else
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / Integer.parseInt(rows.getText());
+			
+			if((Integer.parseInt(rows.getText()) + 2) * squareLength > Panels.HEIGHT - toolBar.getHeight())
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / (Integer.parseInt(rows.getText()) + 2);
 			
 			for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 			{

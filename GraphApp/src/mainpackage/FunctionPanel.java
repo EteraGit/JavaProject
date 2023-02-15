@@ -14,16 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 
 import ast.Expression;
 import design.StylizedButton;
 import design.StylizedTextArea;
-import design.StylizedToolbar;
 import parser.Parser;
 import parser.TokenList;
 
@@ -91,13 +88,13 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 			  } 
 			} );
 		
-		functionInput = new JTextField("Type the function here");
+		functionInput = new JTextField("Type the function here...");
 		functionInput.setForeground(Color.GRAY);
 		functionInput.addKeyListener(new EnterListener(parser));
 		functionInput.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (functionInput.getText().equals("Type something here...")) {
+                if (functionInput.getText().equals("Type the function here...")) {
                 	functionInput.setText("");
                 	functionInput.setForeground(Color.BLACK);
                 }

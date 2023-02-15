@@ -140,26 +140,6 @@ public class Parser {
 			}	
 		}
 		
-		for(int i = 0; i < Tokens.Length(); i++)
-		{
-			if(i == 0 && Tokens.tokenAt(0).type == TokenType.MINUS)
-			{
-				Tokens.remove(0);
-				Tokens.insert(0, new Token(TokenType.NUMBER, "-1"));
-				Tokens.insert(1, new Token(TokenType.TIMES));
-				i++;
-			}
-			else if(Tokens.tokenAt(i).type == TokenType.MINUS &&
-					Tokens.tokenAt(i-1).type != TokenType.NUMBER && 
-					Tokens.tokenAt(i-1).type != TokenType.X)
-			{
-				Tokens.remove(i);
-				Tokens.insert(i, new Token(TokenType.PLUS));
-				Tokens.insert(i+1, new Token(TokenType.NUMBER, "-1"));
-				Tokens.insert(i+2, new Token(TokenType.TIMES));
-				i += 2;
-			}
-		}
 		return Tokens;
 	}
 	
@@ -191,6 +171,8 @@ public class Parser {
 		
 		for(int i = 0; i < 5; i++) Tokens.remove(0);
 		
+		addUnaryMinus(Tokens);
+		
 		Expression newExpression = ParseExpression(Tokens);
 		
 		for(int i = 0; i < CustomFunctions.expressions.size(); i++)
@@ -216,6 +198,29 @@ public class Parser {
 		else Panels.functionsPanel.functionNames.setText(String.join("\n", lines));
 		
 		return newExpression;
+	}
+
+	private void addUnaryMinus(TokenList Tokens) 
+	{
+		for(int i = 0; i < Tokens.Length(); i++)
+		{
+			if(i == 0 && Tokens.tokenAt(0).type == TokenType.MINUS)
+			{
+				Tokens.remove(0);
+				Tokens.insert(0, new Token(TokenType.NUMBER, "-1"));
+				Tokens.insert(1, new Token(TokenType.TIMES));
+				i++;
+			}
+			else if(Tokens.tokenAt(i).type == TokenType.MINUS &&
+					Tokens.tokenAt(i-1).type != TokenType.NUMBER && 
+					Tokens.tokenAt(i-1).type != TokenType.X)
+			{
+				Tokens.remove(i);
+				Tokens.insert(i, new Token(TokenType.NUMBER, "-1"));
+				Tokens.insert(i+1, new Token(TokenType.TIMES));
+				i++;
+			}
+		}
 	}
 
 	private Expression ParseExpression(TokenList Tokens) 
@@ -567,10 +572,11 @@ public class Parser {
 				}
 				
 				Error.showError("You used a custom function that you have not yet defined!");		
-				function = new Function();
+				function = new Linear(0,1);
 				break;
 			default:
-				function = new Function();
+				Error.showError("Unrecognized case!");	
+				function = new Linear(0,1);
 				break;
 			}
 			
