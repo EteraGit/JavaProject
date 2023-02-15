@@ -97,7 +97,7 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 		functionInput.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (functionInput.getText().equals("Type something here...")) {
+                if (functionInput.getText().equals("Type the function here")) {
                 	functionInput.setText("");
                 	functionInput.setForeground(Color.BLACK);
                 }
