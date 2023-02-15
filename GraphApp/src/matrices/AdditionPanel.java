@@ -15,37 +15,42 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
+import design.StylizedButton;
+import design.StylizedToolbar;
 import mainpackage.JFrameTocka;
 import mainpackage.Panels;
 
 @SuppressWarnings("serial")
 public class AdditionPanel extends JPanel implements MouseListener{
 	JToolBar toolBar;
-	JButton matrixButton;
+	StylizedButton matrixButton;
 	JTextField rows;
 	JTextField columns;
-	JButton drawButton;
+	StylizedButton drawButton;
 	JFrameTocka topLeftL = new JFrameTocka(0,0);
 	JFrameTocka topLeftR = new JFrameTocka(0,0);
 	JFrameTocka topLeftResult = new JFrameTocka(0,0);
 	JFrameTocka highlightedSquareL = new JFrameTocka(0,0);
 	JFrameTocka highlightedSquareR = new JFrameTocka(0,0);
 	AdditionKeyHandler keyHandler = null;
-	JButton calculateTransposed;
+	StylizedButton calculateSum;
 	int length;
 	String[][] matrixL, matrixR; int[][] matrixResult;
 	double offset = 6.5;
 	boolean resultPressed;
 	boolean started = false;
 	boolean leftLastClicked = true;
+	Color buttonColor = new Color(255,255,255);
 	
 	public AdditionPanel()
 	{
-		this.setBackground(Color.blue);
+		this.setBackground(Color.WHITE);
 		
-		toolBar = new JToolBar();
+		this.setLayout(new BorderLayout());
+		
+		toolBar = new StylizedToolbar();
 
-		matrixButton = new JButton("Matrices");
+		matrixButton = new StylizedButton("Matrices",13, buttonColor, 1);
 		matrixButton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 					Panels.startPanel.remove(Panels.additionPanel);
@@ -57,10 +62,10 @@ public class AdditionPanel extends JPanel implements MouseListener{
 			  } 
 			} );
 		
-		rows = new JTextField(10);	
+		rows = new JTextField(5);	
 		columns = new JTextField(10);
 		
-		drawButton = new JButton("Draw Matrices");
+		drawButton = new StylizedButton("Draw Matrices",13, buttonColor, 1);
 		ActionListener actionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -80,8 +85,8 @@ public class AdditionPanel extends JPanel implements MouseListener{
         };
 		drawButton.addActionListener(actionListener);
 		
-		calculateTransposed = new JButton("Calculate Sum");
-		calculateTransposed.addActionListener(new ActionListener() { 
+		calculateSum = new StylizedButton("Calculate Sum",13, buttonColor, 1);
+		calculateSum.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 				  resultPressed = true;
 				  matrixResult = calculateSum(matrixL, matrixR);
@@ -99,9 +104,9 @@ public class AdditionPanel extends JPanel implements MouseListener{
 		toolBar.add(rows);
 		toolBar.add(columns);
 		toolBar.add(drawButton);
-		toolBar.add(calculateTransposed);
+		toolBar.add(calculateSum);
 		
-		this.add(toolBar);
+		this.add(toolBar, BorderLayout.PAGE_START);
 		addMouseListener(this);
 	}
 	

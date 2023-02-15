@@ -2,14 +2,18 @@ package mainpackage;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import design.StylizedButton;
 import matrices.AdditionPanel;
 import matrices.DeterminantPanel;
 import matrices.ExponentiationPanel;
@@ -18,7 +22,7 @@ import matrices.SubtractionPanel;
 import matrices.TransposingPanel;
 import matrices.MultiplicationPanel;
 
-import javax.swing.JButton;
+import javax.swing.BorderFactory;
 
 
 
@@ -29,8 +33,9 @@ public class MainFrame implements Runnable{
 	private final int HEIGHT = 400;
 	private final int FPS_SET = 120;
 	private Thread thread;
-	private JButton funkcijeButton;
-	private JButton matriceButton;
+	private StylizedButton funkcijeButton;
+	private StylizedButton matriceButton;
+	private JLabel title;
 
 	/**
 	 * Launch the application.
@@ -63,7 +68,8 @@ public class MainFrame implements Runnable{
 		Panels.startPanel = new JPanel();
 		Panels.startPanel.setLayout(new BorderLayout(10, 10));	
 		Panels.mainPanel = new JPanel();
-		Panels.mainPanel.setBackground(new Color(255,192,203));	
+		Panels.mainPanel.setLayout(new BorderLayout(0,0));
+		Panels.mainPanel.setBackground(new Color(234,186,238));	
 		Panels.functionsPanel = new FunctionPanel();	
 		Panels.matrixPanel = new MatrixPanel();
 		Panels.determinantPanel = new DeterminantPanel();
@@ -74,8 +80,20 @@ public class MainFrame implements Runnable{
 		Panels.inversePanel = new InversePanel();
 		Panels.exponentiationPanel = new ExponentiationPanel();
 		
-		funkcijeButton = new JButton("Funkcije");
-		matriceButton = new JButton("Matrice");
+		Panels.mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 30));
+		
+		Font  fnaslov  = new Font(Font.SANS_SERIF,  Font.BOLD, 90);
+		Color buttonColor = new Color(254, 230, 255);
+		title = new JLabel("MathApp");
+		title.setFont(fnaslov);
+		title.setHorizontalAlignment(JLabel.CENTER);
+		
+		
+		funkcijeButton = new StylizedButton("Functions", 25,buttonColor, 3 );
+		funkcijeButton.setPreferredSize(new Dimension(200, 200));
+		
+		matriceButton = new StylizedButton("Matrices", 25, buttonColor, 3);
+		matriceButton.setPreferredSize(new Dimension(200, 200));
 		
 		funkcijeButton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
@@ -101,8 +119,9 @@ public class MainFrame implements Runnable{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		Panels.startPanel.add(Panels.mainPanel, BorderLayout.CENTER);
-		Panels.mainPanel.add(funkcijeButton);
-		Panels.mainPanel.add(matriceButton);
+		Panels.mainPanel.add(title, BorderLayout.PAGE_START);
+		Panels.mainPanel.add(funkcijeButton, BorderLayout.LINE_START);
+		Panels.mainPanel.add(matriceButton, BorderLayout.LINE_END);
 		
 		
 		frame.add(Panels.startPanel);

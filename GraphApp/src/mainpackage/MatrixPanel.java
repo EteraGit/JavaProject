@@ -4,16 +4,28 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import design.StylizedButton;
+import design.StylizedLabel;
 
 @SuppressWarnings("serial")
 public class MatrixPanel extends JPanel{
+	
+	private int fontSize = 30;
+	private Color backgroundColor = new Color(254, 230, 255);
+	private Color homeButtonColor = new Color(252, 131, 164);
+	StylizedLabel title = new StylizedLabel("Choose one: ", 30);
 
 	public MatrixPanel(){
-		this.setBackground(Color.green);
+		this.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 30));
+		this.setLayout(new GridLayout(5, 2, 10, 15));
+		this.setBackground(new Color(191,191,255));
 		
-		JButton homeButton = new JButton("Home");
+		StylizedButton homeButton = new StylizedButton("Home", fontSize,homeButtonColor, 2);
+		
 		homeButton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 					Panels.startPanel.remove(Panels.matrixPanel);
@@ -25,7 +37,7 @@ public class MatrixPanel extends JPanel{
 			  } 
 			} );
 		
-		JButton determinantButton = new JButton("Determinant");
+		StylizedButton determinantButton = new StylizedButton("Determinant", fontSize, backgroundColor, 2);
 		determinantButton.addActionListener(new ActionListener() {
 			  public void actionPerformed(ActionEvent e) { 
 					Panels.startPanel.remove(Panels.matrixPanel);
@@ -37,7 +49,7 @@ public class MatrixPanel extends JPanel{
 			  } 
 		});
 		
-		JButton transposingButton = new JButton("Transposing");
+		StylizedButton transposingButton = new StylizedButton("Transposing", fontSize, backgroundColor, 2);
 		transposingButton.addActionListener(new ActionListener() {
 			  public void actionPerformed(ActionEvent e) { 
 					Panels.startPanel.remove(Panels.matrixPanel);
@@ -49,7 +61,7 @@ public class MatrixPanel extends JPanel{
 			  } 
 		});
 		
-		JButton additionButton = new JButton("Addition");
+		StylizedButton additionButton = new StylizedButton("Addition", fontSize, backgroundColor, 2);
 		additionButton.addActionListener(new ActionListener() {
 			  public void actionPerformed(ActionEvent e) { 
 					Panels.startPanel.remove(Panels.matrixPanel);
@@ -62,7 +74,7 @@ public class MatrixPanel extends JPanel{
 		});
 		
 
-		JButton multiplicationButton = new JButton("Multiplication");
+		StylizedButton multiplicationButton = new StylizedButton("Multiplication", fontSize, backgroundColor, 2);
 		multiplicationButton.addActionListener(new ActionListener() {
 			  public void actionPerformed(ActionEvent e) { 
 					Panels.startPanel.remove(Panels.matrixPanel);
@@ -73,7 +85,7 @@ public class MatrixPanel extends JPanel{
 					Panels.startPanel.repaint();
 			  }
 		});
-		JButton subtractionButton = new JButton("Subtraction");
+		StylizedButton subtractionButton = new StylizedButton("Subtraction", fontSize, backgroundColor, 2);
 		subtractionButton.addActionListener(new ActionListener() {
 			  public void actionPerformed(ActionEvent e) { 
 					Panels.startPanel.remove(Panels.matrixPanel);
@@ -85,7 +97,7 @@ public class MatrixPanel extends JPanel{
 			  } 
 		});
 		
-		JButton inverseButton = new JButton("Inverse");
+		StylizedButton inverseButton = new StylizedButton("Inverse", fontSize, backgroundColor, 2);
 		inverseButton.addActionListener(new ActionListener() {
 			  public void actionPerformed(ActionEvent e) { 
 					Panels.startPanel.remove(Panels.matrixPanel);
@@ -99,11 +111,7 @@ public class MatrixPanel extends JPanel{
 		});
 		
 
-
-		this.add(multiplicationButton);
-
-
-		JButton exponentiationButton = new JButton("Exponentiation");
+		StylizedButton exponentiationButton = new StylizedButton("Exponentiation", fontSize, backgroundColor, 2);
 		exponentiationButton.addActionListener(new ActionListener() {
 			  public void actionPerformed(ActionEvent e) { 
 					Panels.startPanel.remove(Panels.matrixPanel);
@@ -115,13 +123,18 @@ public class MatrixPanel extends JPanel{
 			  } 
 		});
 		
-
+		
+		
+		this.add(title);
+		this.add(new JLabel(""));
+		this.add(homeButton);
+		this.add(transposingButton);
 		this.add(additionButton);
 		this.add(subtractionButton);
-		this.add(inverseButton);
+		this.add(multiplicationButton);
 		this.add(exponentiationButton);
-		this.add(transposingButton);
+		this.add(inverseButton);
 		this.add(determinantButton);
-		this.add(homeButton);
+		
 	}		
 }
