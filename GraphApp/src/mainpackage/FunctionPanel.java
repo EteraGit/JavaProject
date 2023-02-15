@@ -28,11 +28,14 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 	public double y_down;
 	public double y_up;
 	public int Preciznost;
-	public double zoom;
-	public int ClickX;
-	public int ClickY;
-	public List<Tocka> function;
-	public Parser parser = new Parser();
+	private int faultTolerance = 50;
+	private double zoom;
+	private boolean toggleGridNumbers = true;
+	private boolean toggleGridLines = true;
+	private int ClickX;
+	private int ClickY;
+	private List<Tocka> function;
+	private Parser parser = new Parser();
 	public JTextField functionInput;
 	public JTextArea functionNames;
 
@@ -65,17 +68,37 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 			  } 
 			} );
 		
+		JButton toggleGridNumbersButton = new JButton("Toggle Grid Numbers");
+		toggleGridNumbersButton.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				  toggleGridNumbers = !toggleGridNumbers;
+			  } 
+			} );
+		
+		JButton toggleGridLinesButton = new JButton("Toggle Grid Lines");
+		toggleGridLinesButton.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				  toggleGridLines = !toggleGridLines;
+			  } 
+			} );
+		
 		functionInput = new JTextField();
 		functionInput.addKeyListener(new EnterListener(parser));
 		
 		functionNames = new JTextArea();
 		
 		this.setLayout(null);
+		
 		homeButton.setBounds(20,20,100,50);
+		toggleGridNumbersButton.setBounds(480, 20, 100, 50);
+		toggleGridLinesButton.setBounds(600, 20, 100, 50);
 		functionInput.setBounds(150,30,300,30);
 		functionNames.setBounds(20,80,100,100);
 		
+		
 		this.add(homeButton);
+		this.add(toggleGridNumbersButton);
+		this.add(toggleGridLinesButton);
 		this.add(functionInput);
 		this.add(functionNames);
 	}
@@ -86,9 +109,28 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 		
 		Graphics2D g = (Graphics2D) g1;
 		
+		g.setFont(new Font("default", Font.BOLD, 15));
+		
+		//draw grid lines
+		if(toggleGridLines)
+		{
+			g.setColor(new Color(211,211,211));
+			g.setStroke(new BasicStroke(1));
+			for(int i = (int) Math.floor(y_down) + 1; i <= (int) Math.abs(y_up); i++)
+			{
+				JFrameTocka Ty = coordinate_system_to_jframe(0, i);
+				if(i != 0) g.drawLine(0, Ty.y, Panels.WIDTH, Ty.y);
+			}
+			
+			for(int i = (int) Math.floor(x_left) + 1; i <= (int) Math.abs(x_right); i++)
+			{
+				JFrameTocka Tx = coordinate_system_to_jframe(i, 0);
+				if(i != 0) g.drawLine(Tx.x, 0, Tx.x, Panels.HEIGHT);
+			}
+		}
+		
 		g.setColor(new Color(0,0,0));
 		g.setStroke(new BasicStroke(2));
-		g.setFont(new Font("default", Font.BOLD, 15));
 		
 		//draw y-axis
 		if(x_right > 0 && x_left < 0)
@@ -99,15 +141,16 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 			g.drawString("y", Ty_up.x + 10, Ty_up.y + 15);
 			
 			//numbers on y-axis
-			for(int i = (int) Math.floor(y_down) + 1; i <= (int) Math.abs(y_up); i++)
-			{
-				JFrameTocka Ty = coordinate_system_to_jframe(0, i);
-				if(i != 0) 
-					g.drawString(Integer.toString(i),
-							(int) Ty.x - 20, 
-							(int) Ty.y + 5);
-				g.drawLine(Ty.x - 5, Ty.y, Ty.x + 5, Ty.y);
-			}
+			if(toggleGridNumbers)
+				for(int i = (int) Math.floor(y_down) + 1; i <= (int) Math.abs(y_up); i++)
+				{
+					JFrameTocka Ty = coordinate_system_to_jframe(0, i);
+					if(i != 0) 
+						g.drawString(Integer.toString(i),
+								(int) Ty.x - 20, 
+								(int) Ty.y + 5);
+					g.drawLine(Ty.x - 5, Ty.y, Ty.x + 5, Ty.y);
+				}
 		}
 		
 		//draw x-axis
@@ -119,14 +162,15 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 			g.drawString("x", Tx_right.x - 25, Tx_right.y + 10);
 			
 			//numbers on x-axis
-			for(int i = (int) Math.floor(x_left) + 1; i <= (int) Math.abs(x_right); i++)
-			{
-				JFrameTocka Tx = coordinate_system_to_jframe(i, 0);
-				g.drawString(Integer.toString(i),
-							(int) Tx.x - 5,
-							(int) Tx.y + 20);
-				g.drawLine(Tx.x, Tx.y - 5, Tx.x, Tx.y + 5);
-			}
+			if(toggleGridNumbers)
+				for(int i = (int) Math.floor(x_left) + 1; i <= (int) Math.abs(x_right); i++)
+				{
+					JFrameTocka Tx = coordinate_system_to_jframe(i, 0);
+					g.drawString(Integer.toString(i),
+								(int) Tx.x - 5,
+								(int) Tx.y + 20);
+					g.drawLine(Tx.x, Tx.y - 5, Tx.x, Tx.y + 5);
+				}
 		}
 		
 		g.setColor(new Color(95,0,160));
@@ -137,12 +181,20 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 		{
 			JFrameTocka T1 = coordinate_system_to_jframe(function.get(i).x, function.get(i).y);
 			JFrameTocka T2 = coordinate_system_to_jframe(function.get(i + 1).x, function.get(i + 1).y);
-			if(function.get(i + 1).y > y_down && function.get(i + 1).y < y_up &&
-					function.get(i + 1).x > x_left && function.get(i + 1).x < x_right)
-				g.drawLine(T1.x, T1.y, T2.x, T2.y);
+			if(euclidianDistance(T1, T2) < faultTolerance)
+			{
+				if(function.get(i + 1).y > y_down && function.get(i + 1).y < y_up &&
+						function.get(i + 1).x > x_left && function.get(i + 1).x < x_right)
+					g.drawLine(T1.x, T1.y, T2.x, T2.y);
+			}
 		}
 	}
 	
+	private double euclidianDistance(JFrameTocka t1, JFrameTocka t2) 
+	{	
+		return Math.sqrt(Math.pow(t1.x-t2.x, 2) + Math.pow(t1.y-t2.y, 2));
+	}
+
 	private void setInitialFunction() 
 	{
 		function = new ArrayList<Tocka>();
