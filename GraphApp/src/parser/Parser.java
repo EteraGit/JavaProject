@@ -203,10 +203,6 @@ public class Parser {
 		}
 		CustomFunctions.expressions.add(new Triple<String, TokenList, Expression>(expressionName, Tokens, newExpression));
 		
-		for(int i = 0; i < CustomFunctions.expressions.size(); i++)
-		{
-			System.out.println("Custom Function " + CustomFunctions.expressions.get(i).getM().toString());
-		}
 		boolean found = false;
         String[] lines = Panels.functionsPanel.functionNames.getText().split("\n");
         for (int i = 0; i < lines.length; i++) {
@@ -317,7 +313,6 @@ public class Parser {
 
 	private Term ParseTerm(TokenList Term) 
 	{
-		System.out.println("Parsing term " + Term.toString());
 		if(Term.tokenAt(0).type == TokenType.OPENED && 
 		   Term.tokenAt(Term.Length() - 1).type == TokenType.CLOSED &&
 		   Term.numTokensOfType(TokenType.OPENED) == 1 &&
@@ -408,14 +403,10 @@ public class Parser {
 		}
 		
 		return new Term(Factors);
-	}//f(x)=(3-4x^2)/(x-3x^4) + 1/x^2
-	//g(x)=f(x^5 + 3x) - f(x)^3 * 69
+	}
 	
 	private Factor ParseFactor(TokenList Factor) 
-	{
-		System.out.println("Parsing factor " + Factor.toString());
-		System.out.println(Factor.numTokensOfType(TokenType.CLOSED));
-		
+	{	
 		if(Factor.tokenAt(0).type == TokenType.OPENED && 
 		   Factor.tokenAt(Factor.Length() - 1).type == TokenType.CLOSED &&
 		   Factor.numTokensOfType(TokenType.OPENED) == 1 &&
@@ -481,8 +472,6 @@ public class Parser {
 
 	private Power ParsePower(TokenList Power) 
 	{
-		System.out.println("Parsing power " + Power.toString());
-		System.out.println(Power.numTokensOfType(TokenType.CLOSED));
 		if(Power.tokenAt(0).type == TokenType.OPENED && 
 		   Power.tokenAt(Power.Length() - 1).type == TokenType.CLOSED &&
 		   Power.numTokensOfType(TokenType.OPENED) == 1 &&
@@ -500,10 +489,7 @@ public class Parser {
 				if(Power.tokenAt(0).type == TokenType.X) 
 					return new Power(new Linear(1.0,1.0));
 				else if(Power.tokenAt(0).type == TokenType.NUMBER) 
-				{
-					System.out.println("Parsing value " + Double.parseDouble(Power.tokenAt(0).value));
-					return new Power(new Linear(Double.parseDouble(Power.tokenAt(0).value), 0.0));
-				}
+					return new Power(new Linear(Double.parseDouble(Power.tokenAt(0).value), 0.0));			
 				else 
 					return new Power(new Linear());
 			case 2:
