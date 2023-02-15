@@ -3,6 +3,9 @@ package matrices;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
@@ -10,39 +13,45 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
+import design.StylizedButton;
+import design.StylizedLabel;
+import design.StylizedToolbar;
 import mainpackage.JFrameTocka;
 import mainpackage.Panels;
 import mainpackage.Error;
 
 @SuppressWarnings("serial")
 public class InversePanel extends JPanel implements MouseListener{
-	JToolBar toolBar;
-	JButton matrixButton;
+	StylizedToolbar toolBar;
+	StylizedButton matrixButton;
 	JTextField rows;
-	JButton drawButton;
+	StylizedButton drawButton;
 	JFrameTocka topLeftL = new JFrameTocka(0,0);
 	JFrameTocka topLeftR = new JFrameTocka(0,0);
 	JFrameTocka highlightedSquare = new JFrameTocka(0,0);
 	InverseKeyHandler keyHandler = null;
-	JButton calculateInverse;
+	StylizedButton calculateInverse;
 	int length;
 	String[][] matrix; double[][] inverse;
 	double offset = 6.5;
-	boolean inversePressed;
+	boolean inversePressed = false;
 	boolean started = false;
+	Color buttonColor = new Color(255,255,255);
+	StylizedLabel rowsLabel;
 	
 	public InversePanel()
 	{
-		this.setBackground(Color.pink);
-		
-		toolBar = new JToolBar();
+		this.setBackground(Color.white);
+		this.setLayout(new BorderLayout());
+		toolBar = new StylizedToolbar();
 
-		matrixButton = new JButton("Matrices");
+		matrixButton =  new StylizedButton("Matrices",13, buttonColor, 1 );
 		matrixButton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 					Panels.startPanel.remove(Panels.inversePanel);
@@ -56,7 +65,7 @@ public class InversePanel extends JPanel implements MouseListener{
 		
 		rows = new JTextField(10);
 		
-		drawButton = new JButton("Draw Matrix");
+		drawButton =  new StylizedButton("Draw matrices",13, buttonColor, 1 );
 		ActionListener actionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -73,7 +82,7 @@ public class InversePanel extends JPanel implements MouseListener{
         };
 		drawButton.addActionListener(actionListener);
 		
-		calculateInverse = new JButton("Calculate Inverse");
+		calculateInverse = new StylizedButton("Calculate inverse",13, buttonColor, 1 );
 		calculateInverse.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 				  inverse = calculateInverse(matrix);
@@ -88,12 +97,24 @@ public class InversePanel extends JPanel implements MouseListener{
 		keyHandler = new InverseKeyHandler();
 		addKeyListener(keyHandler);
 		
-		toolBar.add(matrixButton);
-		toolBar.add(rows);
-		toolBar.add(drawButton);
-		toolBar.add(calculateInverse);
+		rowsLabel = new StylizedLabel("Rows", 13);
+		matrixButton.setPreferredSize(new Dimension(70,20));
+		drawButton.setPreferredSize(new Dimension(95, 20));
+		calculateInverse.setPreferredSize(new Dimension(140, 20));
 		
-		this.add(toolBar);
+		toolBar.add(Box.createHorizontalStrut(32));
+		toolBar.add(matrixButton);
+		toolBar.add(Box.createHorizontalStrut(32));
+		toolBar.add(rowsLabel);
+		toolBar.add(Box.createHorizontalStrut(32));
+		toolBar.add(rows);
+		toolBar.add(Box.createHorizontalStrut(32));
+		toolBar.add(drawButton);
+		toolBar.add(Box.createHorizontalStrut(32));
+		toolBar.add(calculateInverse);
+		toolBar.add(Box.createHorizontalStrut(32));
+		
+		this.add(toolBar, BorderLayout.PAGE_START);
 		addMouseListener(this);
 	}
 	
@@ -178,9 +199,13 @@ public class InversePanel extends JPanel implements MouseListener{
 			topLeftL.x = 2 * squareLength;	
 			topLeftL.y = 2 * toolBar.getHeight();
 			
-			
+			g.setFont(new Font("Arial", Font.BOLD, squareLength / 3));
 			drawGrid(g, squareLength);
 			drawNumbers(g, squareLength);
+			
+			
+			g.drawString("-1", topLeftL.x + Integer.parseInt(rows.getText()) * squareLength + squareLength / 10,
+							   topLeftL.y - squareLength / 10);
 			
 			if(inversePressed)
 			{
@@ -188,6 +213,9 @@ public class InversePanel extends JPanel implements MouseListener{
 				topLeftR.y = 2 * toolBar.getHeight();
 				drawGridT(g, squareLength);
 				drawNumbersT(g, squareLength);
+				g.drawString("=", topLeftL.x + Integer.parseInt(rows.getText()) * squareLength + squareLength,
+						   topLeftL.y + squareLength * (Integer.parseInt(rows.getText()))/2);
+				
 			}
 			
 		}
@@ -198,12 +226,13 @@ public class InversePanel extends JPanel implements MouseListener{
 	private void drawNumbersT(Graphics2D g, int squareLength) {
 		// TODO Auto-generated method stub
 
+		FontMetrics metrics = g.getFontMetrics();
 		for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 		{
 			for(int j = 0; j < Integer.parseInt(rows.getText()); j++)
 			{
-				g.drawString(Double.toString(inverse[i][j]), topLeftR.x + j * squareLength + squareLength / 2, 
-						topLeftR.y + i * squareLength + squareLength / 2);
+				g.drawString(Double.toString(inverse[i][j]), topLeftR.x + j * squareLength + (squareLength - metrics.stringWidth(Double.toString(inverse[i][j]))/2) - squareLength/2, 
+						topLeftR.y + i * squareLength + squareLength - metrics.getHeight()/2 + metrics.getAscent() - squareLength/2);
 			}
 		}
 	}
@@ -231,12 +260,13 @@ public class InversePanel extends JPanel implements MouseListener{
 
 	private void drawNumbers(Graphics2D g, int squareLength) {
 		// TODO Auto-generated method stub
+		FontMetrics metrics = g.getFontMetrics();
 		for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 		{
 			for(int j = 0; j < Integer.parseInt(rows.getText()); j++)
 			{
-				g.drawString(matrix[i][j], topLeftL.x + j * squareLength + squareLength / 2, 
-						topLeftL.y + i * squareLength + squareLength / 2);
+				g.drawString(matrix[i][j], topLeftL.x + j * squareLength  + (squareLength - metrics.stringWidth(matrix[i][j])/2) - squareLength/2, 
+						topLeftL.y + i * squareLength + squareLength - metrics.getHeight()/2 + metrics.getAscent() - squareLength/2);
 			}
 		}
 	}

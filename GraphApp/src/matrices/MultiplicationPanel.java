@@ -3,6 +3,9 @@ package matrices;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
@@ -10,31 +13,35 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
+import design.StylizedButton;
+import design.StylizedLabel;
+import design.StylizedToolbar;
 import mainpackage.JFrameTocka;
 import mainpackage.Panels;
 import mainpackage.Error;
 
 @SuppressWarnings("serial")
 public class MultiplicationPanel extends JPanel implements MouseListener{
-	JToolBar toolBar;
-	JButton matrixButton;
-	JLabel r, l;
+	StylizedToolbar toolBar;
+	StylizedButton matrixButton;
+	StylizedLabel rowsLabel1, rowsLabel2, columnsLabel1, columnsLabel2;
 	JTextField rowsL, rowsR;
 	JTextField columnsL, columnsR;
-	JButton drawButton;
+	StylizedButton drawButton;
 	JFrameTocka topLeftL = new JFrameTocka(0,0);
 	JFrameTocka topLeftR = new JFrameTocka(0,0);
 	JFrameTocka topLeftResult = new JFrameTocka(0,0);
 	JFrameTocka highlightedSquareL = new JFrameTocka(0,0);
 	JFrameTocka highlightedSquareR = new JFrameTocka(0,0);
 	MultiplicationKeyHandler keyHandler = null;
-	JButton calculateMulti;
+	StylizedButton calculateMulti;
 	int length;
 	String[][] matrixL, matrixR;
 	int[][] matrixResult;
@@ -42,14 +49,15 @@ public class MultiplicationPanel extends JPanel implements MouseListener{
 	boolean resultPressed;
 	boolean started = false;
 	boolean leftLastClicked = true;
+	Color buttonColor = new Color(255,255,255);
 	
 	public MultiplicationPanel()
 	{
-		this.setBackground(Color.cyan);
-		
-		toolBar = new JToolBar();
+		this.setBackground(Color.white);
+		this.setLayout(new BorderLayout());
+		toolBar = new StylizedToolbar();
 
-		matrixButton = new JButton("Matrices");
+		matrixButton = new StylizedButton("Matrices",13, buttonColor, 1 );
 		matrixButton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 					Panels.startPanel.remove(Panels.multiplicationPanel);
@@ -65,10 +73,8 @@ public class MultiplicationPanel extends JPanel implements MouseListener{
 		columnsL = new JTextField(5);
 		rowsR = new JTextField(5);	
 		columnsR = new JTextField(5);
-		l=new JLabel("1.");
-		r=new JLabel("2.");
 		
-		drawButton = new JButton("Draw Matrices");
+		drawButton = new StylizedButton("Draw matrices",13, buttonColor, 1 );
 		ActionListener actionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -86,7 +92,7 @@ public class MultiplicationPanel extends JPanel implements MouseListener{
         };
 		drawButton.addActionListener(actionListener);
 		
-		calculateMulti = new JButton("Multiply");
+		calculateMulti = new StylizedButton("Multiply",13, buttonColor, 1 );
 		calculateMulti.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) {   
 				  matrixResult = calculateProduct(matrixL, matrixR);
@@ -101,17 +107,40 @@ public class MultiplicationPanel extends JPanel implements MouseListener{
 		keyHandler = new MultiplicationKeyHandler();
 		addKeyListener(keyHandler);
 		
-		toolBar.add(matrixButton);
-		toolBar.add(l);
-		toolBar.add(rowsL);
-		toolBar.add(columnsL);
-		toolBar.add(r);
-		toolBar.add(rowsR);
-		toolBar.add(columnsR);
-		toolBar.add(drawButton);
-		toolBar.add(calculateMulti);
+		rowsLabel1 = new StylizedLabel("Rows", 13);
+		rowsLabel2 = new StylizedLabel("Rows", 13);
+		columnsLabel1 = new StylizedLabel("Columns", 13);
+		columnsLabel2 = new StylizedLabel("Columns", 13);
+		matrixButton.setPreferredSize(new Dimension(70,20));
+		drawButton.setPreferredSize(new Dimension(105, 20));
+		calculateMulti.setPreferredSize(new Dimension(110, 20));
 		
-		this.add(toolBar);
+		
+		toolBar.add(Box.createHorizontalStrut(20));
+		toolBar.add(matrixButton);
+		toolBar.add(Box.createHorizontalStrut(20));
+		toolBar.add(rowsLabel1);
+		toolBar.add(Box.createHorizontalStrut(20));
+		toolBar.add(rowsL);
+		toolBar.add(Box.createHorizontalStrut(20));
+		toolBar.add(columnsLabel1);
+		toolBar.add(Box.createHorizontalStrut(20));
+		toolBar.add(columnsL);
+		toolBar.add(Box.createHorizontalStrut(20));
+		toolBar.add(rowsLabel2);
+		toolBar.add(Box.createHorizontalStrut(20));
+		toolBar.add(rowsR);
+		toolBar.add(Box.createHorizontalStrut(20));
+		toolBar.add(columnsLabel2);
+		toolBar.add(Box.createHorizontalStrut(20));
+		toolBar.add(columnsR);
+		toolBar.add(Box.createHorizontalStrut(20));
+		toolBar.add(drawButton);
+		toolBar.add(Box.createHorizontalStrut(20));
+		toolBar.add(calculateMulti);
+		toolBar.add(Box.createHorizontalStrut(20));
+		
+		this.add(toolBar, BorderLayout.PAGE_START);
 		addMouseListener(this);
 	}
 	
@@ -172,16 +201,26 @@ public class MultiplicationPanel extends JPanel implements MouseListener{
 				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / Integer.parseInt(rowsL.getText());
 			else
 				squareLength = Panels.WIDTH / (Integer.parseInt(columnsL.getText()) + 2*Integer.parseInt(columnsR.getText()) + 8);
+			g.setFont(new Font("Arial", Font.BOLD, squareLength/2));
 			
 			topLeftL.x = 2 * squareLength;	
 			topLeftL.y = 2 * toolBar.getHeight();
-				
+			
+			g.drawString("*", topLeftL.x + (1 + Integer.parseInt(columnsL.getText())) * squareLength,
+					   topLeftL.y + squareLength * (int)(Double.parseDouble(rowsL.getText())/2) +squareLength/2);
+			
+			g.setFont(new Font("Arial", Font.BOLD, squareLength / 3));
 			drawGridL(g, squareLength);
 			drawNumbersL(g, squareLength);
 			
+			
+			g.setFont(new Font("Arial", Font.BOLD, squareLength/2));
 			topLeftR.x = (4 + Integer.parseInt(columnsL.getText())) * squareLength;
 			topLeftR.y = 2 * toolBar.getHeight();
 			
+			g.drawString("=", topLeftR.x + (1+Integer.parseInt(columnsR.getText())) * squareLength,
+					   topLeftR.y + squareLength * (Integer.parseInt(rowsR.getText())/2));
+			g.setFont(new Font("Arial", Font.BOLD, squareLength / 3));
 			drawGridR(g, squareLength);
 			drawNumbersR(g, squareLength);
 			
@@ -201,12 +240,13 @@ public class MultiplicationPanel extends JPanel implements MouseListener{
 	private void drawNumbersL(Graphics2D g, int squareLength) {
 		// TODO Auto-generated method stub
 
+		FontMetrics metrics = g.getFontMetrics();
 		for(int i = 0; i < Integer.parseInt(rowsL.getText()); i++)
 		{
 			for(int j = 0; j < Integer.parseInt(columnsL.getText()); j++)
 			{
-				g.drawString(matrixL[i][j], topLeftL.x + j * squareLength + squareLength / 2, 
-						topLeftL.y + i * squareLength + squareLength / 2);
+				g.drawString(matrixL[i][j], topLeftL.x + j * squareLength + (squareLength - metrics.stringWidth(matrixL[i][j])/2) - squareLength/2,
+						topLeftL.y + i * squareLength + squareLength - metrics.getHeight()/2 + metrics.getAscent() - squareLength/2);
 			}
 		}
 	}
@@ -214,12 +254,13 @@ public class MultiplicationPanel extends JPanel implements MouseListener{
 	private void drawNumbersR(Graphics2D g, int squareLength) {
 		// TODO Auto-generated method stub
 
+		FontMetrics metrics = g.getFontMetrics();
 		for(int i = 0; i < Integer.parseInt(rowsR.getText()); i++)
 		{
 			for(int j = 0; j < Integer.parseInt(columnsR.getText()); j++)
 			{
-				g.drawString(matrixR[i][j], topLeftR.x + j * squareLength + squareLength / 2, 
-						topLeftR.y + i * squareLength + squareLength / 2);
+				g.drawString(matrixR[i][j], topLeftR.x + j * squareLength + (squareLength - metrics.stringWidth(matrixR[i][j])/2) - squareLength/2,
+						topLeftR.y + i * squareLength + squareLength - metrics.getHeight()/2 + metrics.getAscent() - squareLength/2);
 			}
 		}
 	}
@@ -227,12 +268,13 @@ public class MultiplicationPanel extends JPanel implements MouseListener{
 	private void drawNumbersResult(Graphics2D g, int squareLength) {
 		// TODO Auto-generated method stub
 
+		FontMetrics metrics = g.getFontMetrics();
 		for(int i = 0; i < Integer.parseInt(rowsL.getText()); i++)
 		{
 			for(int j = 0; j < Integer.parseInt(columnsR.getText()); j++)
 			{
-				g.drawString(Integer.toString(matrixResult[i][j]), topLeftResult.x + j * squareLength + squareLength / 2, 
-						topLeftResult.y + i * squareLength + squareLength / 2);
+				g.drawString(Integer.toString(matrixResult[i][j]), topLeftResult.x + j * squareLength + (squareLength - metrics.stringWidth(Integer.toString(matrixResult[i][j]))/2) - squareLength/2,
+						topLeftResult.y + i * squareLength + squareLength - metrics.getHeight()/2 + metrics.getAscent() - squareLength/2);
 			}
 		}
 	}

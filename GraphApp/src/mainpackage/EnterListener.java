@@ -31,10 +31,10 @@ public class EnterListener extends KeyAdapter{
 			Expression expression = parser.Parse(Tokens);
 			
 			List<Tocka> newFunction = new ArrayList<Tocka>();
-			for(int i = 0; i < Panels.functionsPanel.Preciznost; i++)
+			for(int i = 0; i < Panels.functionsPanel.accuracy; i++)
 			{
 				double broj_x = Panels.functionsPanel.x_left +
-								((double) i / (double) Panels.functionsPanel.Preciznost) *
+								((double) i / (double) Panels.functionsPanel.accuracy) *
 								Math.abs(Panels.functionsPanel.x_right - Panels.functionsPanel.x_left);
 				double broj_y = expression.Compute(broj_x);
 				

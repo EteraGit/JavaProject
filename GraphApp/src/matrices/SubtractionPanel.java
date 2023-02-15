@@ -3,6 +3,9 @@ package matrices;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
@@ -10,28 +13,33 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
+import design.StylizedButton;
+import design.StylizedLabel;
+import design.StylizedToolbar;
 import mainpackage.JFrameTocka;
 import mainpackage.Panels;
 
 @SuppressWarnings("serial")
 public class SubtractionPanel extends JPanel implements MouseListener{
-	JToolBar toolBar;
-	JButton matrixButton;
+	StylizedToolbar toolBar;
+	StylizedButton matrixButton;
 	JTextField rows;
 	JTextField columns;
-	JButton drawButton;
+	StylizedButton drawButton;
 	JFrameTocka topLeftL = new JFrameTocka(0,0);
 	JFrameTocka topLeftR = new JFrameTocka(0,0);
 	JFrameTocka topLeftResult = new JFrameTocka(0,0);
 	JFrameTocka highlightedSquareL = new JFrameTocka(0,0);
 	JFrameTocka highlightedSquareR = new JFrameTocka(0,0);
 	SubtractionKeyHandler keyHandler = null;
-	JButton calculateTransposed;
+	StylizedButton calculateSubtraction;
+	StylizedLabel rowsLabel, columnsLabel;
 	int length;
 	String[][] matrixL, matrixR;
 	int[][] matrixResult;
@@ -39,14 +47,15 @@ public class SubtractionPanel extends JPanel implements MouseListener{
 	boolean resultPressed;
 	boolean started = false;
 	boolean leftLastClicked = true;
+	Color buttonColor = new Color(255,255,255);
 	
 	public SubtractionPanel()
 	{
-		this.setBackground(Color.blue);
-		
-		toolBar = new JToolBar();
+		this.setBackground(Color.white);
+		this.setLayout(new BorderLayout());
+		toolBar = new StylizedToolbar();
 
-		matrixButton = new JButton("Matrices");
+		matrixButton =new StylizedButton("Matrices",13, buttonColor, 1 );
 		matrixButton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 					Panels.startPanel.remove(Panels.subtractionPanel);
@@ -61,7 +70,7 @@ public class SubtractionPanel extends JPanel implements MouseListener{
 		rows = new JTextField(10);	
 		columns = new JTextField(10);
 		
-		drawButton = new JButton("Draw Matrices");
+		drawButton = new StylizedButton("Draw matrices",13, buttonColor, 1 );
 		ActionListener actionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -79,8 +88,8 @@ public class SubtractionPanel extends JPanel implements MouseListener{
         };
 		drawButton.addActionListener(actionListener);
 		
-		calculateTransposed = new JButton("Calculate Subtraction");
-		calculateTransposed.addActionListener(new ActionListener() { 
+		calculateSubtraction =new StylizedButton("Calculate Subtraction",13, buttonColor, 1 );
+		calculateSubtraction.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 				  resultPressed = true;
 				  matrixResult = calculateSubtraction(matrixL, matrixR);
@@ -94,13 +103,31 @@ public class SubtractionPanel extends JPanel implements MouseListener{
 		keyHandler = new SubtractionKeyHandler();
 		addKeyListener(keyHandler);
 		
-		toolBar.add(matrixButton);
-		toolBar.add(rows);
-		toolBar.add(columns);
-		toolBar.add(drawButton);
-		toolBar.add(calculateTransposed);
+		rowsLabel = new StylizedLabel("Rows", 13);
+		columnsLabel = new StylizedLabel("Columns", 13);
 		
-		this.add(toolBar);
+		
+		matrixButton.setPreferredSize(new Dimension(90,20));
+		drawButton.setPreferredSize(new Dimension(110, 20));
+		calculateSubtraction.setPreferredSize(new Dimension(140, 20));
+		
+		toolBar.add(Box.createHorizontalStrut(25));
+		toolBar.add(matrixButton);
+		toolBar.add(Box.createHorizontalStrut(25));
+		toolBar.add(rowsLabel);
+		toolBar.add(Box.createHorizontalStrut(25));
+		toolBar.add(rows);
+		toolBar.add(Box.createHorizontalStrut(25));
+		toolBar.add(columnsLabel);
+		toolBar.add(Box.createHorizontalStrut(25));
+		toolBar.add(columns);
+		toolBar.add(Box.createHorizontalStrut(25));
+		toolBar.add(drawButton);
+		toolBar.add(Box.createHorizontalStrut(25));
+		toolBar.add(calculateSubtraction);
+		toolBar.add(Box.createHorizontalStrut(25));
+		
+		this.add(toolBar, BorderLayout.PAGE_START);
 		addMouseListener(this);
 	}
 	
@@ -153,16 +180,25 @@ public class SubtractionPanel extends JPanel implements MouseListener{
 				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / Integer.parseInt(rows.getText());
 			else
 				squareLength = Panels.WIDTH / (3 * Integer.parseInt(columns.getText()) + 8);
-			
+			g.setFont(new Font("Arial", Font.BOLD, squareLength/2));
 			topLeftL.x = 2 * squareLength;	
 			topLeftL.y = 2 * toolBar.getHeight();
 				
+			g.drawString("-", topLeftL.x + (1 + Integer.parseInt(columns.getText())) * squareLength,
+					   topLeftL.y + squareLength * (Integer.parseInt(rows.getText())/2));
+			
+			g.setFont(new Font("Arial", Font.BOLD, squareLength/3));
 			drawGridL(g, squareLength);
 			drawNumbersL(g, squareLength);
 			
+			
+			g.setFont(new Font("Arial", Font.BOLD, squareLength/2));
 			topLeftR.x = (4 + Integer.parseInt(columns.getText())) * squareLength;
 			topLeftR.y = 2 * toolBar.getHeight();
+			g.drawString("=", topLeftR.x + (1+Integer.parseInt(columns.getText())) * squareLength,
+					   topLeftL.y + squareLength * (Integer.parseInt(rows.getText())/2));
 			
+			g.setFont(new Font("Arial", Font.BOLD, squareLength/3));
 			drawGridR(g, squareLength);
 			drawNumbersR(g, squareLength);
 			
@@ -182,12 +218,13 @@ public class SubtractionPanel extends JPanel implements MouseListener{
 	private void drawNumbersL(Graphics2D g, int squareLength) {
 		// TODO Auto-generated method stub
 
+		FontMetrics metrics = g.getFontMetrics();
 		for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 		{
 			for(int j = 0; j < Integer.parseInt(columns.getText()); j++)
 			{
-				g.drawString(matrixL[i][j], topLeftL.x + j * squareLength + squareLength / 2, 
-						topLeftL.y + i * squareLength + squareLength / 2);
+				g.drawString(matrixL[i][j], topLeftL.x + j * squareLength  + (squareLength - metrics.stringWidth(matrixL[i][j])/2) - squareLength/2, 
+						topLeftL.y + i * squareLength + squareLength - metrics.getHeight()/2 + metrics.getAscent() - squareLength/2);
 			}
 		}
 	}
@@ -195,12 +232,13 @@ public class SubtractionPanel extends JPanel implements MouseListener{
 	private void drawNumbersR(Graphics2D g, int squareLength) {
 		// TODO Auto-generated method stub
 
+		FontMetrics metrics = g.getFontMetrics();
 		for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 		{
 			for(int j = 0; j < Integer.parseInt(columns.getText()); j++)
 			{
-				g.drawString(matrixR[i][j], topLeftR.x + j * squareLength + squareLength / 2, 
-						topLeftR.y + i * squareLength + squareLength / 2);
+				g.drawString(matrixR[i][j], topLeftR.x + j * squareLength + (squareLength - metrics.stringWidth(matrixR[i][j])/2) - squareLength/2,  
+						topLeftR.y + i * squareLength + squareLength - metrics.getHeight()/2 + metrics.getAscent() - squareLength/2);
 			}
 		}
 	}
@@ -208,12 +246,13 @@ public class SubtractionPanel extends JPanel implements MouseListener{
 	private void drawNumbersResult(Graphics2D g, int squareLength) {
 		// TODO Auto-generated method stub
 
+		FontMetrics metrics = g.getFontMetrics();
 		for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 		{
 			for(int j = 0; j < Integer.parseInt(columns.getText()); j++)
 			{
-				g.drawString(Integer.toString(matrixResult[i][j]), topLeftResult.x + j * squareLength + squareLength / 2, 
-						topLeftResult.y + i * squareLength + squareLength / 2);
+				g.drawString(Integer.toString(matrixResult[i][j]), topLeftResult.x + j * squareLength+ (squareLength - metrics.stringWidth(Integer.toString(matrixResult[i][j]))/2) - squareLength/2,  
+						topLeftResult.y + i * squareLength + squareLength - metrics.getHeight()/2 + metrics.getAscent() - squareLength/2);
 			}
 		}
 	}

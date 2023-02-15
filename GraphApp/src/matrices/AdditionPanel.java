@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -115,7 +116,7 @@ public class AdditionPanel extends JPanel implements MouseListener{
 		drawButton.setPreferredSize(new Dimension(110, 20));
 		calculateSum.setPreferredSize(new Dimension(110, 20));
 		
-		
+		toolBar.add(Box.createHorizontalStrut(15));
 		toolBar.add(matrixButton);
 		toolBar.add(Box.createHorizontalStrut(15));
 		toolBar.add(rowsLabel);
@@ -186,12 +187,19 @@ public class AdditionPanel extends JPanel implements MouseListener{
 			
 			topLeftL.x = 2 * squareLength;	
 			topLeftL.y = 2 * toolBar.getHeight();
-				
+			
+			g.setFont(new Font("Arial", Font.BOLD, squareLength / 3));
 			drawGridL(g, squareLength);
 			drawNumbersL(g, squareLength);
 			
+			g.drawString("+", topLeftL.x + (1 + Integer.parseInt(columns.getText())) * squareLength,
+					   topLeftL.y + squareLength * (Integer.parseInt(rows.getText())/2));
+			
 			topLeftR.x = (4 + Integer.parseInt(columns.getText())) * squareLength;
 			topLeftR.y = 2 * toolBar.getHeight();
+			
+			g.drawString("=", topLeftR.x + (1+Integer.parseInt(columns.getText())) * squareLength,
+					   topLeftL.y + squareLength * (Integer.parseInt(rows.getText())/2));
 			
 			drawGridR(g, squareLength);
 			drawNumbersR(g, squareLength);

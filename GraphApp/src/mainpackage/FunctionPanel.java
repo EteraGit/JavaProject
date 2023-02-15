@@ -3,6 +3,8 @@ package mainpackage;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -11,12 +13,17 @@ import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JButton;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
 
 import ast.Expression;
+import design.StylizedButton;
+import design.StylizedTextArea;
+import design.StylizedToolbar;
 import parser.Parser;
 import parser.TokenList;
 
@@ -27,7 +34,7 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 	public double x_right;
 	public double y_down;
 	public double y_up;
-	public int Preciznost;
+	public int accuracy;
 	private int faultTolerance = 50;
 	private double zoom;
 	private boolean toggleGridNumbers = true;
@@ -37,7 +44,7 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 	private List<Tocka> function;
 	private Parser parser = new Parser();
 	public JTextField functionInput;
-	public JTextArea functionNames;
+	public StylizedTextArea functionNames;
 
 	public FunctionPanel() 
 	{
@@ -46,8 +53,10 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 		y_down = -5;
 		y_up = 5;
 		zoom = 0.1;
-		Preciznost = 10000;
-		
+		accuracy = 10000;
+		Color buttonColor = new Color(222,183,255);
+		Color homeButtonColor = new Color(252, 131, 164);
+		this.setLayout(null);
 		setInitialFunction();
 		
 		addMouseWheelListener(this);
@@ -56,7 +65,7 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 		
 		this.addKeyListener(new KeyPressHandler());
 		
-		JButton homeButton = new JButton("Home");
+		StylizedButton homeButton = new StylizedButton("Home", 20, homeButtonColor, 2);
 		homeButton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 					Panels.startPanel.remove(Panels.functionsPanel);
@@ -68,45 +77,62 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 			  } 
 			} );
 		
-		JButton toggleGridNumbersButton = new JButton("Toggle Grid Numbers");
+		StylizedButton toggleGridNumbersButton = new StylizedButton("Toggle Grid Numbers", 9, buttonColor, 1);
 		toggleGridNumbersButton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 				  toggleGridNumbers = !toggleGridNumbers;
 			  } 
 			} );
 		
-		JButton toggleGridLinesButton = new JButton("Toggle Grid Lines");
+		StylizedButton toggleGridLinesButton = new StylizedButton("Toggle Grid Lines", 9, buttonColor, 1);
 		toggleGridLinesButton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 				  toggleGridLines = !toggleGridLines;
 			  } 
 			} );
 		
-		functionInput = new JTextField();
+		functionInput = new JTextField("Type the function here");
+		functionInput.setForeground(Color.GRAY);
 		functionInput.addKeyListener(new EnterListener(parser));
+		functionInput.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (functionInput.getText().equals("Type something here...")) {
+                	functionInput.setText("");
+                	functionInput.setForeground(Color.BLACK);
+                }
+            }
+        });
+
 		
-		functionNames = new JTextArea();
 		
-		this.setLayout(null);
+		Border border = BorderFactory.createLineBorder(new Color(74,20,78), 2);
+		functionInput.setBorder(border);
 		
-		homeButton.setBounds(20,20,100,50);
-		toggleGridNumbersButton.setBounds(480, 20, 100, 50);
-		toggleGridLinesButton.setBounds(600, 20, 100, 50);
-		functionInput.setBounds(150,30,300,30);
-		functionNames.setBounds(20,80,100,100);
+		functionNames = new StylizedTextArea(4, 15);
+		
+		
+		
+		homeButton.setBounds(20, 15, 80, 50);
+		functionInput.setBounds(115,20,300,30);
+		toggleGridNumbersButton.setBounds(760, 15, 100, 40);
+		toggleGridLinesButton.setBounds(760, 85, 100, 40);
+		functionNames.setBounds(20,345, 200, 100);
+		
 		
 		
 		this.add(homeButton);
-		this.add(toggleGridNumbersButton);
-		this.add(toggleGridLinesButton);
 		this.add(functionInput);
+		this.add(toggleGridLinesButton);
+		this.add(toggleGridNumbersButton);
+		
 		this.add(functionNames);
 	}
 
+	@Override
 	public void paintComponent(Graphics g1) 
 	{
 		super.paintComponent(g1);
-		
 		Graphics2D g = (Graphics2D) g1;
 		
 		g.setFont(new Font("default", Font.BOLD, 15));
@@ -198,9 +224,9 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 	private void setInitialFunction() 
 	{
 		function = new ArrayList<Tocka>();
-		for(int i = 0; i < Preciznost; i++)
+		for(int i = 0; i < accuracy; i++)
 		{
-			double broj_x = x_left + ((double) i / (double) Preciznost) * Math.abs(x_right - x_left);
+			double broj_x = x_left + ((double) i / (double) accuracy) * Math.abs(x_right - x_left);
 			double broj_y = 0;
 			
 			function.add(new Tocka(broj_x, broj_y));
@@ -270,10 +296,10 @@ public class FunctionPanel extends JPanel implements MouseWheelListener,MouseLis
 		Expression expression = parser.Parse(Tokens);
 		
 		List<Tocka> newFunction = new ArrayList<Tocka>();
-		for(int i = 0; i < Preciznost; i++)
+		for(int i = 0; i < accuracy; i++)
 		{
 			double broj_x = x_left +
-							((double) i / (double) Preciznost) *
+							((double) i / (double) accuracy) *
 							Math.abs(x_right - x_left);
 			double broj_y = expression.Compute(broj_x);
 			
