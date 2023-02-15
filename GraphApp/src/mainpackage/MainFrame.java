@@ -29,8 +29,8 @@ import javax.swing.BorderFactory;
 public class MainFrame implements Runnable{
 
 	private JFrame frame;
-	private final int WIDTH = 600;
-	private final int HEIGHT = 400;
+	private final int WIDTH = 888;
+	private final int HEIGHT = 500;
 	private final int FPS_SET = 120;
 	private Thread thread;
 	private StylizedButton funkcijeButton;

@@ -8,7 +8,8 @@ public class StylizedToolbar extends JToolBar {
 
     public StylizedToolbar() {
     	
-    	setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+    	setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+
 
         setOrientation(JToolBar.HORIZONTAL);
         this.setPreferredSize(new Dimension(super.getWidth(), 26));
