@@ -3,17 +3,25 @@ package matrices;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.UIManager;
 
 import design.StylizedButton;
+import design.StylizedLabel;
 import design.StylizedToolbar;
 import mainpackage.JFrameTocka;
 import mainpackage.Panels;
@@ -39,6 +47,7 @@ public class AdditionPanel extends JPanel implements MouseListener{
 	boolean started = false;
 	boolean leftLastClicked = true;
 	Color buttonColor = new Color(255,255,255);
+	StylizedLabel rowsLabel, columnsLabel;
 	
 	public AdditionPanel()
 	{
@@ -61,7 +70,7 @@ public class AdditionPanel extends JPanel implements MouseListener{
 			} );
 		
 		rows = new JTextField(5);	
-		columns = new JTextField(10);
+		columns = new JTextField(5);
 		
 		drawButton = new StylizedButton("Draw Matrices",13, buttonColor, 1);
 		ActionListener actionListener = new ActionListener() {
@@ -98,10 +107,27 @@ public class AdditionPanel extends JPanel implements MouseListener{
 		keyHandler = new AdditionKeyHandler();
 		addKeyListener(keyHandler);
 		
+		rowsLabel = new StylizedLabel(" Rows ", 13);
+		columnsLabel = new StylizedLabel(" Columns ", 13);
+		
+		
+		matrixButton.setPreferredSize(new Dimension(90,20));
+		drawButton.setPreferredSize(new Dimension(110, 20));
+		calculateSum.setPreferredSize(new Dimension(110, 20));
+		
+		toolBar.add(Box.createHorizontalStrut(15));
 		toolBar.add(matrixButton);
+		toolBar.add(Box.createHorizontalStrut(15));
+		toolBar.add(rowsLabel);
+		toolBar.add(Box.createHorizontalStrut(15));
 		toolBar.add(rows);
+		toolBar.add(Box.createHorizontalStrut(15));
+		toolBar.add(columnsLabel);
+		toolBar.add(Box.createHorizontalStrut(15));
 		toolBar.add(columns);
+		toolBar.add(Box.createHorizontalStrut(15));
 		toolBar.add(drawButton);
+		toolBar.add(Box.createHorizontalStrut(15));
 		toolBar.add(calculateSum);
 		
 		this.add(toolBar, BorderLayout.PAGE_START);
@@ -160,12 +186,19 @@ public class AdditionPanel extends JPanel implements MouseListener{
 			
 			topLeftL.x = 2 * squareLength;	
 			topLeftL.y = 2 * toolBar.getHeight();
-				
+			
+			g.setFont(new Font("Arial", Font.BOLD, squareLength / 3));
 			drawGridL(g, squareLength);
 			drawNumbersL(g, squareLength);
 			
+			g.drawString("+", topLeftL.x + (1 + Integer.parseInt(columns.getText())) * squareLength,
+					   topLeftL.y + squareLength * (Integer.parseInt(rows.getText())/2));
+			
 			topLeftR.x = (4 + Integer.parseInt(columns.getText())) * squareLength;
 			topLeftR.y = 2 * toolBar.getHeight();
+			
+			g.drawString("=", topLeftR.x + (1+Integer.parseInt(columns.getText())) * squareLength,
+					   topLeftL.y + squareLength * (Integer.parseInt(rows.getText())/2));
 			
 			drawGridR(g, squareLength);
 			drawNumbersR(g, squareLength);
@@ -186,12 +219,15 @@ public class AdditionPanel extends JPanel implements MouseListener{
 	private void drawNumbersL(Graphics2D g, int squareLength) {
 		// TODO Auto-generated method stub
 
+		FontMetrics metrics = g.getFontMetrics();
+		
 		for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 		{
 			for(int j = 0; j < Integer.parseInt(columns.getText()); j++)
 			{
-				g.drawString(matrixL[i][j], topLeftL.x + j * squareLength + squareLength / 2, 
-						topLeftL.y + i * squareLength + squareLength / 2);
+				g.drawString(matrixL[i][j], 
+						topLeftL.x + j * squareLength + (squareLength - metrics.stringWidth(matrixL[i][j])/2) - squareLength/2, 
+						topLeftL.y + i * squareLength + squareLength - metrics.getHeight()/2 + metrics.getAscent() - squareLength/2);
 			}
 		}
 	}
@@ -199,12 +235,13 @@ public class AdditionPanel extends JPanel implements MouseListener{
 	private void drawNumbersR(Graphics2D g, int squareLength) {
 		// TODO Auto-generated method stub
 
+		FontMetrics metrics = g.getFontMetrics();
 		for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 		{
 			for(int j = 0; j < Integer.parseInt(columns.getText()); j++)
 			{
-				g.drawString(matrixR[i][j], topLeftR.x + j * squareLength + squareLength / 2, 
-						topLeftR.y + i * squareLength + squareLength / 2);
+				g.drawString(matrixR[i][j], topLeftR.x + j * squareLength + (squareLength - metrics.stringWidth(matrixR[i][j])/2) - squareLength/2, 
+						topLeftR.y + i * squareLength + squareLength - metrics.getHeight()/2 + metrics.getAscent() - squareLength/2);
 			}
 		}
 	}
@@ -212,12 +249,13 @@ public class AdditionPanel extends JPanel implements MouseListener{
 	private void drawNumbersResult(Graphics2D g, int squareLength) {
 		// TODO Auto-generated method stub
 
+		FontMetrics metrics = g.getFontMetrics();
 		for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 		{
 			for(int j = 0; j < Integer.parseInt(columns.getText()); j++)
 			{
-				g.drawString(Integer.toString(matrixResult[i][j]), topLeftResult.x + j * squareLength + squareLength / 2, 
-						topLeftResult.y + i * squareLength + squareLength / 2);
+				g.drawString(Integer.toString(matrixResult[i][j]), topLeftResult.x + j * squareLength +(squareLength - metrics.stringWidth(Integer.toString(matrixResult[i][j]))/2) - squareLength/2, 
+						topLeftResult.y + i * squareLength + squareLength - metrics.getHeight()/2 + metrics.getAscent() - squareLength/2);
 			}
 		}
 	}

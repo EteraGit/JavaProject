@@ -3,6 +3,9 @@ package matrices;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
@@ -10,38 +13,45 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+
+import design.StylizedButton;
+import design.StylizedLabel;
+import design.StylizedToolbar;
 import mainpackage.JFrameTocka;
 import mainpackage.Panels;
 
 @SuppressWarnings("serial")
 public class ExponentiationPanel extends JPanel implements MouseListener{
-	JToolBar toolBar;
-	JButton matrixButton;
+	StylizedToolbar toolBar;
+	StylizedButton matrixButton;
 	JTextField rows;
 	JTextField times;
-	JButton drawButton;
+	StylizedButton drawButton;
 	JFrameTocka topLeftL = new JFrameTocka(0,0);
 	JFrameTocka topLeftR = new JFrameTocka(0,0);
 	JFrameTocka highlightedSquare = new JFrameTocka(0,0);
 	ExponentiationKeyHandler keyHandler = null;
-	JButton calculateInverse;
+	StylizedButton calculateExp;
+	StylizedLabel rowsLabel, timesLabel;
 	int length;
 	String[][] matrix; int[][] exponential;
 	double offset = 6.5;
 	boolean exponentiationPressed;
 	boolean started = false;
+	Color buttonColor = new Color(255,255,255);
 	
 	public ExponentiationPanel()
 	{
-		this.setBackground(Color.pink);
-		
-		toolBar = new JToolBar();
+		this.setBackground(Color.white);
+		this.setLayout(new BorderLayout());
+		toolBar = new StylizedToolbar();
 
-		matrixButton = new JButton("Matrices");
+		matrixButton = new StylizedButton("Matrices",13, buttonColor, 1 );
 		matrixButton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 					Panels.startPanel.remove(Panels.exponentiationPanel);
@@ -56,7 +66,7 @@ public class ExponentiationPanel extends JPanel implements MouseListener{
 		rows = new JTextField(10);
 		times = new JTextField(10);
 		
-		drawButton = new JButton("Draw Matrix");
+		drawButton = new StylizedButton("Draw Matrix",13, buttonColor, 1);
 		ActionListener actionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -73,8 +83,8 @@ public class ExponentiationPanel extends JPanel implements MouseListener{
         };
 		drawButton.addActionListener(actionListener);
 		
-		calculateInverse = new JButton("Calculate Exponential");
-		calculateInverse.addActionListener(new ActionListener() { 
+		calculateExp = new StylizedButton("Calculate Exponential",13, buttonColor, 1);
+		calculateExp.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 				  if(times.getText().equals("")) return;
 				  
@@ -89,16 +99,33 @@ public class ExponentiationPanel extends JPanel implements MouseListener{
 			  }
 			} );
 		
+		rowsLabel = new StylizedLabel("Rows", 13);
+		timesLabel = new StylizedLabel("Exponent", 13);
+		matrixButton.setPreferredSize(new Dimension(70,20));
+		drawButton.setPreferredSize(new Dimension(95, 20));
+		calculateExp.setPreferredSize(new Dimension(140, 20));
+		
 		keyHandler = new ExponentiationKeyHandler();
 		addKeyListener(keyHandler);
 		
-		toolBar.add(matrixButton);
-		toolBar.add(rows);
-		toolBar.add(times);
-		toolBar.add(drawButton);
-		toolBar.add(calculateInverse);
 		
-		this.add(toolBar);
+		toolBar.add(Box.createHorizontalStrut(32));
+		toolBar.add(matrixButton);
+		toolBar.add(Box.createHorizontalStrut(32));
+		toolBar.add(rowsLabel);
+		toolBar.add(Box.createHorizontalStrut(32));
+		toolBar.add(rows);
+		toolBar.add(Box.createHorizontalStrut(32));
+		toolBar.add(timesLabel);
+		toolBar.add(Box.createHorizontalStrut(32));
+		toolBar.add(times);
+		toolBar.add(Box.createHorizontalStrut(32));
+		toolBar.add(drawButton);
+		toolBar.add(Box.createHorizontalStrut(32));
+		toolBar.add(calculateExp);
+		toolBar.add(Box.createHorizontalStrut(32));
+		
+		this.add(toolBar, BorderLayout.PAGE_START);
 		addMouseListener(this);
 	}
 	
@@ -172,16 +199,21 @@ public class ExponentiationPanel extends JPanel implements MouseListener{
 			topLeftL.x = 2 * squareLength;	
 			topLeftL.y = 2 * toolBar.getHeight();
 			
+			g.setFont(new Font("Arial", Font.BOLD, squareLength / 3));
 			
 			drawGrid(g, squareLength);
 			drawNumbers(g, squareLength);
-			
+			g.drawString(times.getText(), topLeftL.x + Integer.parseInt(rows.getText()) * squareLength + squareLength / 10,
+						   topLeftL.y - squareLength / 10);
 			if(exponentiationPressed)
 			{
 				topLeftR.x = Panels.WIDTH - (2 + Integer.parseInt(rows.getText())) * squareLength;
 				topLeftR.y = 2 * toolBar.getHeight();
 				drawGridExponential(g, squareLength);
 				drawNumbersExponential(g, squareLength);
+				
+				g.drawString("=", topLeftL.x + Integer.parseInt(rows.getText()) * squareLength + squareLength,
+						   topLeftL.y + squareLength * (Integer.parseInt(rows.getText()))/2);
 			}
 			
 		}
@@ -190,12 +222,14 @@ public class ExponentiationPanel extends JPanel implements MouseListener{
 	}
 
 	private void drawNumbersExponential(Graphics2D g, int squareLength) {
+		
+		FontMetrics metrics = g.getFontMetrics();
 		for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 		{
 			for(int j = 0; j < Integer.parseInt(rows.getText()); j++)
 			{
-				g.drawString(Double.toString(exponential[i][j]), topLeftR.x + j * squareLength + squareLength / 2, 
-						topLeftR.y + i * squareLength + squareLength / 2);
+				g.drawString(Double.toString(exponential[i][j]), topLeftR.x + j * squareLength + (squareLength - metrics.stringWidth(Integer.toString(exponential[i][j]))/2) - squareLength/2, 
+						topLeftR.y + i * squareLength + squareLength - metrics.getHeight()/2 + metrics.getAscent() - squareLength/2);
 			}
 		}
 	}
@@ -221,12 +255,14 @@ public class ExponentiationPanel extends JPanel implements MouseListener{
 	}
 
 	private void drawNumbers(Graphics2D g, int squareLength) {
+		
+		FontMetrics metrics = g.getFontMetrics();
 		for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 		{
 			for(int j = 0; j < Integer.parseInt(rows.getText()); j++)
 			{
-				g.drawString(matrix[i][j], topLeftL.x + j * squareLength + squareLength / 2, 
-						topLeftL.y + i * squareLength + squareLength / 2);
+				g.drawString(matrix[i][j], topLeftL.x + j * squareLength+ (squareLength - metrics.stringWidth(matrix[i][j])/2) - squareLength/2, 
+						topLeftL.y + i * squareLength + squareLength - metrics.getHeight()/2 + metrics.getAscent() - squareLength/2);
 			}
 		}
 	}

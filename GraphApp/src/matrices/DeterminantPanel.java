@@ -3,6 +3,9 @@ package matrices;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
@@ -10,38 +13,47 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
+import design.StylizedButton;
+import design.StylizedLabel;
+import design.StylizedToolbar;
 import mainpackage.JFrameTocka;
 import mainpackage.Panels;
 
 @SuppressWarnings("serial")
 public class DeterminantPanel extends JPanel implements MouseListener{
 	
-	JToolBar toolBar;
-	JButton matrixButton;
+	StylizedToolbar toolBar;
+	StylizedButton matrixButton;
 	JTextField rows;
-	JButton drawButton;
+	StylizedButton drawButton;
 	JFrameTocka topLeft = new JFrameTocka(0,0);
 	JFrameTocka highlightedSquare = new JFrameTocka(0,0);
 	DeterminantKeyHandler keyHandler;
-	JButton calculateDeterminant;
-	JLabel result;
+	StylizedButton calculateDeterminant;
+	StylizedLabel resultLabel;
+	StylizedLabel result;
+	StylizedLabel rowsLabel;
 	int length;
 	String[][] matrix;
 	double offset = 3.3;
+	Color buttonColor = new Color(255,255,255);
 	
 	public DeterminantPanel()
 	{
-		this.setBackground(Color.red);
+		this.setBackground(Color.WHITE);
 		
-		toolBar = new JToolBar();
+		this.setLayout(new BorderLayout());
 		
-		matrixButton = new JButton("Matrices");
+		toolBar = new StylizedToolbar();
+		
+		matrixButton = new StylizedButton("Matrices",13, buttonColor, 1 );
 		matrixButton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 					Panels.startPanel.remove(Panels.determinantPanel);
@@ -53,9 +65,10 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 			  } 
 			} );
 		
-		rows = new JTextField(10);	
+		rows = new JTextField(10);
+		rows.setPreferredSize(new Dimension(10,20));
 		
-		drawButton = new JButton("Draw Matrix");
+		drawButton = new StylizedButton("Draw Matrix", 13, buttonColor, 1);
 		ActionListener actionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -68,26 +81,42 @@ public class DeterminantPanel extends JPanel implements MouseListener{
             }
         };
 		drawButton.addActionListener(actionListener);
-		
-		calculateDeterminant = new JButton("Calculate Determinant");
+		result = new StylizedLabel("", 13);
+		calculateDeterminant = new StylizedButton("Calculate Determinant", 13, buttonColor, 1);
 		calculateDeterminant.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 				  result.setText(Integer.toString(calculateDetermiant(matrix)));
 			  }
 			} );
 		
-		result = new JLabel();
+		resultLabel = new StylizedLabel("Result:", 13);
+		rowsLabel = new StylizedLabel("Rows", 13);
+		
+		matrixButton.setPreferredSize(new Dimension(70,20));
+		drawButton.setPreferredSize(new Dimension(95, 20));
+		calculateDeterminant.setPreferredSize(new Dimension(140, 20));
+		
 		
 		keyHandler = new DeterminantKeyHandler();
 		addKeyListener(keyHandler);
 		
+		toolBar.add(Box.createHorizontalStrut(32));
 		toolBar.add(matrixButton);
+		toolBar.add(Box.createHorizontalStrut(22));
+		toolBar.add(rowsLabel);
+		toolBar.add(Box.createHorizontalStrut(70));
 		toolBar.add(rows);
+		toolBar.add(Box.createHorizontalStrut(70));
 		toolBar.add(drawButton);
+		toolBar.add(Box.createHorizontalStrut(22));
 		toolBar.add(calculateDeterminant);
+		toolBar.add(Box.createHorizontalStrut(22));
+		toolBar.add(resultLabel);
+		toolBar.add(Box.createHorizontalStrut(22));
 		toolBar.add(result);
+		toolBar.add(Box.createHorizontalStrut(22));
 		
-		this.add(toolBar);
+		this.add(toolBar, BorderLayout.PAGE_START);
 		addMouseListener(this);
 	}
 	
@@ -141,13 +170,18 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 		{
 			Graphics2D g = (Graphics2D) g1;
 			
-			length = Panels.HEIGHT - (int) (offset * toolBar.getHeight()) - 
-						(Panels.HEIGHT - (int) (offset * toolBar.getHeight())) % Integer.parseInt(rows.getText());
-			topLeft.x = (Panels.WIDTH - length) / 2;
+			int squareLength = (Panels.HEIGHT - toolBar.getHeight())/ (Integer.parseInt(rows.getText()) + 2);
+			
+			
+			topLeft.x = 4*squareLength;
 			topLeft.y = 2 * toolBar.getHeight();
 			
-			drawGrid(g, length / Integer.parseInt(rows.getText()));
-			drawNumbers(g, length / Integer.parseInt(rows.getText()));
+			g.setFont(new Font("Arial", Font.BOLD, squareLength / 3));
+			g.setStroke(new BasicStroke(4));
+			g.drawLine(topLeft.x - squareLength/3, topLeft.y - squareLength/3, topLeft.x - squareLength/3 , topLeft.y + Integer.parseInt(rows.getText())*squareLength + squareLength/3);
+			g.drawLine(topLeft.x + Integer.parseInt(rows.getText())*squareLength + squareLength/3, topLeft.y - squareLength/3, topLeft.x + Integer.parseInt(rows.getText())*squareLength + squareLength/3, topLeft.y + Integer.parseInt(rows.getText())*squareLength + squareLength/3);
+			drawGrid(g, squareLength);
+			drawNumbers(g, squareLength);
 		}
 		this.setFocusable(true);
 		this.requestFocusInWindow();
@@ -155,12 +189,13 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 
 	private void drawNumbers(Graphics2D g, int squareLength) {
 		// TODO Auto-generated method stub
+		FontMetrics metrics = g.getFontMetrics();
 		for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 		{
 			for(int j = 0; j < Integer.parseInt(rows.getText()); j++)
 			{
-				g.drawString(matrix[i][j], topLeft.x + i * squareLength + squareLength / 2, 
-															 topLeft.y + j * squareLength + squareLength / 2);
+				g.drawString(matrix[i][j], topLeft.x + i * squareLength + (squareLength - metrics.stringWidth(matrix[i][j])/2) - squareLength/2, 
+										   topLeft.y + j * squareLength + squareLength - metrics.getHeight()/2 + metrics.getAscent() - squareLength/2);
 			}
 		}
 	}
@@ -169,8 +204,7 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 	private void drawGrid(Graphics2D g, int squareLength) {
 		// TODO Auto-generated method stub
 		
-		int height = Panels.HEIGHT - (int) (offset * toolBar.getHeight()) - 
-				(Panels.HEIGHT - (int) (offset * toolBar.getHeight())) % Integer.parseInt(rows.getText());
+		int height = squareLength * Integer.parseInt(rows.getText());
 		
 		g.setColor(new Color(0,0,0));
 		g.setStroke(new BasicStroke(2));
@@ -200,7 +234,7 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 		
 		if (e.getButton() == MouseEvent.BUTTON3) 
 		{
-			int squareLength = length / Integer.parseInt(rows.getText());
+			int squareLength = (Panels.HEIGHT  - toolBar.getHeight())/ (Integer.parseInt(rows.getText()) + 2);
 			
 			for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 			{
@@ -222,7 +256,7 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 		}
 		else if(e.getButton() == MouseEvent.BUTTON1)
 		{
-			int squareLength = length / Integer.parseInt(rows.getText());
+			int squareLength = (Panels.HEIGHT  - toolBar.getHeight())/ (Integer.parseInt(rows.getText()) + 2);
 			
 			for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 			{
