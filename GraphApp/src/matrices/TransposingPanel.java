@@ -12,12 +12,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Random;
 
 import javax.swing.Box;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.JToolBar;
 
 import design.StylizedButton;
 import design.StylizedLabel;
@@ -66,6 +65,18 @@ public class TransposingPanel extends JPanel implements MouseListener{
 			  } 
 			} );
 		
+		StylizedButton randomButton = new StylizedButton("Random",13, buttonColor, 1);
+		randomButton.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				  if(!rows.getText().equals("")) 
+				  {
+	            	  matrix = new String[Integer.parseInt(rows.getText())][Integer.parseInt(columns.getText())];
+					  addRandomNumbers();
+					  repaint();
+				  }
+			  } 
+			} );
+		
 		rows = new JTextField(10);	
 		columns = new JTextField(10);
 		
@@ -104,6 +115,7 @@ public class TransposingPanel extends JPanel implements MouseListener{
 		matrixButton.setPreferredSize(new Dimension(70,20));
 		drawButton.setPreferredSize(new Dimension(95, 20));
 		calculateTransposed.setPreferredSize(new Dimension(200, 20));
+		randomButton.setPreferredSize(new Dimension(80, 20));
 		
 		toolBar.add(Box.createHorizontalStrut(32));
 		toolBar.add(matrixButton);
@@ -117,6 +129,8 @@ public class TransposingPanel extends JPanel implements MouseListener{
 		toolBar.add(columns);
 		toolBar.add(Box.createHorizontalStrut(32));
 		toolBar.add(drawButton);
+		toolBar.add(Box.createHorizontalStrut(22));
+		toolBar.add(randomButton);
 		toolBar.add(Box.createHorizontalStrut(32));	
 		toolBar.add(calculateTransposed);
 		toolBar.add(Box.createHorizontalStrut(32));
@@ -124,6 +138,17 @@ public class TransposingPanel extends JPanel implements MouseListener{
 		
 		this.add(toolBar, BorderLayout.PAGE_START);
 		addMouseListener(this);
+	}
+	
+	protected void addRandomNumbers()
+	{
+		for(int i = 0; i < matrix.length; i++)
+		{
+			for(int j = 0; j < matrix[0].length; j++)
+			{
+				matrix[i][j] = Integer.toString(new Random().nextInt(21) - 10);
+			}
+		}
 	}
 	
 	protected void setMatrix()
@@ -158,7 +183,15 @@ public class TransposingPanel extends JPanel implements MouseListener{
 		{
 			Graphics2D g = (Graphics2D) g1;
 			
+			g.clearRect(0, 0, Panels.WIDTH, Panels.HEIGHT);
+			
 			int squareLength = Panels.WIDTH / (Integer.parseInt(rows.getText()) + Integer.parseInt(columns.getText()) + 6);
+			
+			if((Integer.parseInt(rows.getText()) + 2) * squareLength > Panels.HEIGHT - toolBar.getHeight())
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / (Integer.parseInt(rows.getText()) + 2);
+			
+			if((Integer.parseInt(columns.getText()) + 2) * squareLength > Panels.HEIGHT - toolBar.getHeight())
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / (Integer.parseInt(columns.getText()) + 2);
 			
 			topLeftL.x = 2 * squareLength;	
 			topLeftL.y = 2 * toolBar.getHeight();
@@ -272,6 +305,12 @@ public class TransposingPanel extends JPanel implements MouseListener{
 		{
 			int squareLength = Panels.WIDTH / (Integer.parseInt(rows.getText()) + Integer.parseInt(columns.getText()) + 6);
 			
+			if((Integer.parseInt(rows.getText()) + 2) * squareLength > Panels.HEIGHT - toolBar.getHeight())
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / (Integer.parseInt(rows.getText()) + 2);
+			
+			if((Integer.parseInt(columns.getText()) + 2) * squareLength > Panels.HEIGHT - toolBar.getHeight())
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / (Integer.parseInt(columns.getText()) + 2);
+			
 			for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 			{
 				for(int j = 0; j < Integer.parseInt(columns.getText()); j++)
@@ -293,6 +332,12 @@ public class TransposingPanel extends JPanel implements MouseListener{
 		else if(e.getButton() == MouseEvent.BUTTON1) //left click
 		{
 			int squareLength = Panels.WIDTH / (Integer.parseInt(rows.getText()) + Integer.parseInt(columns.getText()) + 6);
+			
+			if((Integer.parseInt(rows.getText()) + 2) * squareLength > Panels.HEIGHT - toolBar.getHeight())
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / (Integer.parseInt(rows.getText()) + 2);
+			
+			if((Integer.parseInt(columns.getText()) + 2) * squareLength > Panels.HEIGHT - toolBar.getHeight())
+				squareLength = (Panels.HEIGHT - toolBar.getHeight()) / (Integer.parseInt(columns.getText()) + 2);
 			
 			for(int i = 0; i < Integer.parseInt(rows.getText()); i++)
 			{

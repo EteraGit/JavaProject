@@ -12,13 +12,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Random;
 
 import javax.swing.Box;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.JToolBar;
-
 import design.StylizedButton;
 import design.StylizedLabel;
 import design.StylizedToolbar;
@@ -63,6 +61,18 @@ public class InversePanel extends JPanel implements MouseListener{
 			  } 
 			} );
 		
+		StylizedButton randomButton = new StylizedButton("Random",13, buttonColor, 1);
+		randomButton.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				  if(!rows.getText().equals("")) 
+				  {
+	            	  matrix = new String[Integer.parseInt(rows.getText())][Integer.parseInt(rows.getText())];
+					  addRandomNumbers();
+					  repaint();
+				  }
+			  } 
+			} );
+		
 		rows = new JTextField(10);
 		
 		drawButton =  new StylizedButton("Draw matrices",13, buttonColor, 1 );
@@ -101,6 +111,7 @@ public class InversePanel extends JPanel implements MouseListener{
 		matrixButton.setPreferredSize(new Dimension(70,20));
 		drawButton.setPreferredSize(new Dimension(95, 20));
 		calculateInverse.setPreferredSize(new Dimension(140, 20));
+		randomButton.setPreferredSize(new Dimension(80, 20));
 		
 		toolBar.add(Box.createHorizontalStrut(32));
 		toolBar.add(matrixButton);
@@ -110,12 +121,24 @@ public class InversePanel extends JPanel implements MouseListener{
 		toolBar.add(rows);
 		toolBar.add(Box.createHorizontalStrut(32));
 		toolBar.add(drawButton);
+		toolBar.add(Box.createHorizontalStrut(22));
+		toolBar.add(randomButton);
 		toolBar.add(Box.createHorizontalStrut(32));
 		toolBar.add(calculateInverse);
 		toolBar.add(Box.createHorizontalStrut(32));
 		
 		this.add(toolBar, BorderLayout.PAGE_START);
 		addMouseListener(this);
+	}
+	protected void addRandomNumbers()
+	{
+		for(int i = 0; i < matrix.length; i++)
+		{
+			for(int j = 0; j < matrix[0].length; j++)
+			{
+				matrix[i][j] = Integer.toString(new Random().nextInt(21) - 10);
+			}
+		}
 	}
 	
 	protected void setMatrix()
@@ -193,6 +216,8 @@ public class InversePanel extends JPanel implements MouseListener{
 		if(!rows.getText().equals(""))
 		{
 			Graphics2D g = (Graphics2D) g1;
+			
+			g.clearRect(0, 0, Panels.WIDTH, Panels.HEIGHT);
 			
 			int squareLength = Panels.WIDTH / (2 * Integer.parseInt(rows.getText()) + 6);
 			

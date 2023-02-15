@@ -1,6 +1,6 @@
 package functions;
 
-public class Linear {
+public class Linear extends Function{
 	private double Coefficient;
 	private double Exponent;
 	

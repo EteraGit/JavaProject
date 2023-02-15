@@ -12,13 +12,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Random;
 
 import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.JToolBar;
 
 import design.StylizedButton;
 import design.StylizedLabel;
@@ -69,6 +67,20 @@ public class MultiplicationPanel extends JPanel implements MouseListener{
 			  } 
 			} );
 		
+		StylizedButton randomButton = new StylizedButton("Random",13, buttonColor, 1);
+		randomButton.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				  if(!rowsL.getText().equals("") && !columnsL.getText().equals("")) 
+				  {
+	            	  matrixL = new String[Integer.parseInt(rowsL.getText())][Integer.parseInt(columnsL.getText())];
+	            	  matrixR = new String[Integer.parseInt(rowsR.getText())][Integer.parseInt(columnsR.getText())];
+	            	  matrixResult = new int[Integer.parseInt(rowsL.getText())][Integer.parseInt(columnsR.getText())];
+					  addRandomNumbers();
+					  repaint();
+				  }
+			  } 
+			} );
+		
 		rowsL = new JTextField(5);	
 		columnsL = new JTextField(5);
 		rowsR = new JTextField(5);	
@@ -114,7 +126,7 @@ public class MultiplicationPanel extends JPanel implements MouseListener{
 		matrixButton.setPreferredSize(new Dimension(70,20));
 		drawButton.setPreferredSize(new Dimension(105, 20));
 		calculateMulti.setPreferredSize(new Dimension(110, 20));
-		
+		randomButton.setPreferredSize(new Dimension(80, 20));
 		
 		toolBar.add(Box.createHorizontalStrut(20));
 		toolBar.add(matrixButton);
@@ -136,12 +148,33 @@ public class MultiplicationPanel extends JPanel implements MouseListener{
 		toolBar.add(columnsR);
 		toolBar.add(Box.createHorizontalStrut(20));
 		toolBar.add(drawButton);
+		toolBar.add(Box.createHorizontalStrut(15));
+		toolBar.add(randomButton);
 		toolBar.add(Box.createHorizontalStrut(20));
 		toolBar.add(calculateMulti);
 		toolBar.add(Box.createHorizontalStrut(20));
 		
 		this.add(toolBar, BorderLayout.PAGE_START);
 		addMouseListener(this);
+	}
+	
+	protected void addRandomNumbers()
+	{
+		for(int i = 0; i < matrixL.length; i++)
+		{
+			for(int j = 0; j < matrixL[0].length; j++)
+			{
+				matrixL[i][j] = Integer.toString(new Random().nextInt(21) - 10);
+			}
+		}
+		
+		for(int i = 0; i < matrixR.length; i++)
+		{
+			for(int j = 0; j < matrixR[0].length; j++)
+			{
+				matrixR[i][j] = Integer.toString(new Random().nextInt(21) - 10);
+			}
+		}
 	}
 	
 	protected void setMatrixL()
@@ -194,6 +227,8 @@ public class MultiplicationPanel extends JPanel implements MouseListener{
 		if(!rowsL.getText().equals("") && !columnsL.getText().equals("") && !rowsR.getText().equals("") && !columnsR.getText().equals(""))
 		{
 			Graphics2D g = (Graphics2D) g1;
+			
+			g.clearRect(0, 0, Panels.WIDTH, Panels.HEIGHT);
 			
 			int squareLength;
 			
