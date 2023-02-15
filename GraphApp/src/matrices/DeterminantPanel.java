@@ -164,6 +164,7 @@ public class DeterminantPanel extends JPanel implements MouseListener{
 			}
 		}
 	}
+	
 
 	private void drawGrid(Graphics2D g, int squareLength) {
 		// TODO Auto-generated method stub
